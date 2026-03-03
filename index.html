@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <script src="./config.js"></script>
+    <script src="./generate-constellation.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+
+    <div class="canvas-wrapper" id="container">
+        <div id="status"></div>
+    </div>
+
+    <script>
+        generateConstellation();
+    </script>
+    <button onclick="saveSvg()" style="position: fixed; bottom: 20px; right: 20px;">
+        Export Constellation 🌌
+    </button>
+</body>
+
+</html>

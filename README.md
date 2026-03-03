@@ -1,2 +1,3 @@
-# Github profile constellation 
+# Github profile constellation
+
 Work in progress.
