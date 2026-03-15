@@ -3,30 +3,30 @@ let statusLines = [];
 
 function genRgbColorFromStargazerCount(count) {
     const progressiveBlueness = Math.log10(count + 1);
-    const intensity = Math.min(progressiveBlueness / 3, 1); 
+    const intensity = Math.min(progressiveBlueness / 3, 1);
     const rVal = Math.floor(255 - (255 * intensity));
-    const gVal = Math.floor(255 - (13 * intensity)); 
-    const bVal = 255; 
+    const gVal = Math.floor(255 - (13 * intensity));
+    const bVal = 255;
     return `rgb(${rVal}, ${gVal}, ${bVal})`;
 }
 
 async function generateConstellation() {
-    
+
     const status = document.getElementById('status');
     const container = document.getElementById('container');
-    
+
 
 
     const headers = new Headers();
-    
+
     if (config.token) headers.append("Authorization", `token ${config.token}`);
 
     try {
 
         // Canvas configuration
         const canvasCenterX = config.canvasWidth / 2;
-        const canvasCenterY = (config.canvasHeight / 2)-10;
-        
+        const canvasCenterY = (config.canvasHeight / 2) - 10;
+
 
         // Fetch repository data
         const [userRes, reposRes, eventsRes, gistsRes, starredRes, linguistRes] = await Promise.all([
@@ -53,15 +53,15 @@ async function generateConstellation() {
             if (repo.language)
                 languageCountKeyValueMap[repo.language] = (languageCountKeyValueMap[repo.language] || 0) + 1;
         });
-        
+
         const mostUsedLanguageByUser = Object.keys(languageCountKeyValueMap)
             .reduce(
                 (currentKey, nextKey) => languageCountKeyValueMap[currentKey] > languageCountKeyValueMap[nextKey] ? currentKey : nextKey, currentMostUsedLangInTheWorld);
 
         const topThreeLanguages = Object.entries(languageCountKeyValueMap)
-            .sort((currentEntry, nextEntry) => nextEntry[1] - currentEntry[1]) 
-            .slice(0, 3)                 
-            .map(entry => entry[0]);     
+            .sort((currentEntry, nextEntry) => nextEntry[1] - currentEntry[1])
+            .slice(0, 3)
+            .map(entry => entry[0]);
 
         const languageColors = {};
         for (const lang in linguist) {
@@ -85,24 +85,24 @@ async function generateConstellation() {
         const randNumGen = new Math.seedrandom(config.username + yearsActive);
 
         const getConstellation = (scale, xOff, yOff) => {
-        
+
             const constellation = (repos && repos.length ? repos : Array(constellationNodesCount).fill({}));
-            
-            return constellation.map((repo, i) => {
+
+            return constellation.map((repo, currentRepoIndex) => {
 
                 const constellationRandNumGen = new Math.seedrandom(`${repo.id}-${repo.size}`);
                 const deterministicHash = constellationRandNumGen();
-        
+
                 const radius = (40 + (Math.pow(deterministicHash, 1.4) * 110)) * scale;
-                const angle = (i * Math.PI * 2) / constellation.length - Math.PI / 2;
+                const angle = (currentRepoIndex * Math.PI * 2) / constellation.length - Math.PI / 2;
                 const x = canvasCenterX + xOff + radius * Math.cos(angle);
-                const y = canvasCenterY + yOff + (radius * Math.sin(angle) * 0.6); 
+                const y = canvasCenterY + yOff + (radius * Math.sin(angle) * 0.6);
 
                 return {
-                    x, 
+                    x,
                     y,
                     colorFromRepoLang: (repo.language && languageColors[repo.language]) ? languageColors[repo.language] : "#ffffff",
-                    stargazerIntensity : 3+(repo.stargazers_count*0.002),
+                    stargazerIntensity: 3 + (repo.stargazers_count * 0.002),
                     colorFromRepoStargazer: genRgbColorFromStargazerCount(repo.stargazers_count || 0)
                 };
             });
@@ -110,11 +110,11 @@ async function generateConstellation() {
 
         const constellation = getConstellation(2, 0, 0);
         const constellationPoints = constellation.map(point => `${point.x},${point.y}`).join(' ');
-        
+
         // Generated stars in the background based on starred repos, with dynamic colors and sizes based on stargazer count
         const stars = starred.map(star => {
             const count = star.stargazers_count || 0;
-            const intensity = Math.min(Math.log10(count + 1) / 3, 1); 
+            const intensity = Math.min(Math.log10(count + 1) / 3, 1);
             const dynamicColor = genRgbColorFromStargazerCount(star.stargazers_count || 0);
 
             const x = randNumGen() * config.canvasWidth;
@@ -156,7 +156,7 @@ async function generateConstellation() {
             </filter>
 
             <filter id="neonTextGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="1.5" result="blur" />
+                <feGaussianBlur stdDeviation="2" result="blur" />
                 <feMerge>
                     <feMergeNode in="blur"/>
                     <feMergeNode in="SourceGraphic"/>
@@ -186,20 +186,21 @@ async function generateConstellation() {
                 <polyline points="${constellationPoints}"  fill-opacity="0.00" stroke="${primaryLangColor}" stroke-width="1"/>
                 
                 ${constellation.map((node, i) => {
-                    console.log('start : ', node);
+            const animationRadius = 1.5;
 
-                    const animationRadius = 1.5;
-        
-                    const d = 1.5 + randNumGen() + node.stargazerIntensity;
-                    return `<circle cx="${node.x}" cy="${node.y}" r="${node.stargazerIntensity}" fill="${node.colorFromRepoStargazer}">
-                                        <animate attributeName="r" values="${animationRadius};${node.stargazerIntensity};${animationRadius}" dur="${d}s" repeatCount="indefinite" />
-                                        <animate attributeName="opacity" values="${animationRadius};${animationRadius};${animationRadius}" dur="${d}s" repeatCount="indefinite" />
-                                    </circle>
-                            `;
-                }).join('')}
+            const twinkleDuration = 1.5 + randNumGen() + node.stargazerIntensity;
+            return `<circle cx="${node.x}" cy="${node.y}" r="${node.stargazerIntensity}" fill="${node.colorFromRepoStargazer}">
+                                                <animate attributeName="r" values="${animationRadius};${node.stargazerIntensity};${animationRadius}" dur="${twinkleDuration}s" repeatCount="indefinite" />
+                                                <animate attributeName="opacity" values="${animationRadius};${animationRadius};${animationRadius}" dur="${twinkleDuration}s" repeatCount="indefinite" />
+                                            </circle>
+                `;
+        }).join('')}
             </g>
         </g>
-        <text id ="status" x="10" y="${config.canvasHeight - 70}" font-family="Consolas" font-size="10px" text-anchor="start" fill="${config.terminalColor}" style="filter: url(#neonTextGlow); font-weight: bold;">
+        <text class ="status" x="10" y="${config.canvasHeight - 70}" font-family="Consolas" font-size="10px" text-anchor="start" fill="${config.terminalColor}" style="filter: url(#neonTextGlow);">
+            ${terminalOutput.map((line, i) => `<tspan x="20" dy="${i === 0 ? 0 : '1.4em'}">${line}</tspan>`).join('')}
+        </text>
+        <text class ="status" x="10" y="${config.canvasHeight - 70}" font-family="Consolas" font-size="10px" text-anchor="start" fill="${config.terminalColor}" >
             ${terminalOutput.map((line, i) => `<tspan x="20" dy="${i === 0 ? 0 : '1.4em'}">${line}</tspan>`).join('')}
         </text>
     </svg>`;
@@ -219,8 +220,8 @@ function saveSvg() {
     const statusText = statusLines;
     const svgClone = svgElement.cloneNode(true);
 
-    svgClone.setAttribute("width", "100%"); 
-    svgClone.setAttribute("height", "auto"); 
+    svgClone.setAttribute("width", "100%");
+    svgClone.setAttribute("height", "auto");
     svgClone.setAttribute("viewBox", `0 0 ${config.canvasWidth} ${config.canvasHeight}`);
 
     const headStyle = document.querySelector('style');
