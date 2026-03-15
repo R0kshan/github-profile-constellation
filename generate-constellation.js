@@ -90,7 +90,9 @@ async function generateConstellation() {
 
             return constellation.map((repo, currentRepoIndex) => {
 
-                const constellationRandNumGen = new Math.seedrandom(`${repo.id}-${repo.size}`);
+                console.log('repo', repo);
+
+                const constellationRandNumGen = new Math.seedrandom(`${repo.size}-${repo.id}-${repo.created_at}-${repo.node_id}`);
                 const deterministicHash = constellationRandNumGen();
 
                 const radius = (40 + (Math.pow(deterministicHash, 1.4) * 110)) * scale;
@@ -109,7 +111,54 @@ async function generateConstellation() {
         };
 
         const constellation = getConstellation(2, 0, 0);
-        const constellationPoints = constellation.map(point => `${point.x},${point.y}`).join(' ');
+
+        const connectionLines = (() => {
+            const lines = [];
+            const connected = [0];
+            const unreachable = [...Array(constellation.length).keys()].slice(1);
+
+            while (unreachable.length > 0) {
+                let minDist = Infinity;
+                let bestFrom = -1;
+                let bestToIndex = -1;
+
+                for (const i of connected) {
+                    for (let j = 0; j < unreachable.length; j++) {
+                        const toIdx = unreachable[j];
+                        const d = Math.hypot(constellation[i].x - constellation[toIdx].x, constellation[i].y - constellation[toIdx].y);
+                        if (d < minDist) {
+                            minDist = d;
+                            bestFrom = i;
+                            bestToIndex = j;
+                        }
+                    }
+                }
+
+                const toIdx = unreachable[bestToIndex];
+
+                if (minDist < config.canvasWidth * 0.35) {
+                    const x1 = constellation[bestFrom].x;
+                    const y1 = constellation[bestFrom].y;
+                    const x2 = constellation[toIdx].x;
+                    const y2 = constellation[toIdx].y;
+
+                    lines.push(`
+                <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" 
+                      stroke="${thirdLangColor}" stroke-width="20" stroke-opacity="0.07" filter="url(#softGlow)" />
+
+                <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" 
+                      stroke="${secondLangColor}" stroke-width="5" stroke-opacity="0.07" filter="url(#softGlow)" />
+
+                <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" 
+                      stroke="${primaryLangColor}" stroke-width="1" stroke-opacity="0.8" />
+            `);
+                }
+
+                connected.push(toIdx);
+                unreachable.splice(bestToIndex, 1);
+            }
+            return lines.join('');
+        })();
 
         // Generated stars in the background based on starred repos, with dynamic colors and sizes based on stargazer count
         const stars = starred.map(star => {
@@ -168,22 +217,8 @@ async function generateConstellation() {
         <g id="starfield">${stars}</g>
 
         <g filter="url(#neonGlow)" style="animation: float ${floatDur}s ease-in-out infinite;">
-            <g >
-                <polyline points="${constellationPoints}" 
-                fill="none" 
-                stroke="${thirdLangColor}" 
-                stroke-width="20" 
-                stroke-opacity="0.07" 
-                filter="url(#softGlow)" />
-
-                <polyline points="${constellationPoints}" 
-                fill="none" 
-                stroke="${secondLangColor}" 
-                stroke-width="5" 
-                stroke-opacity="0.07" 
-                filter="url(#softGlow)" />
-
-                <polyline points="${constellationPoints}"  fill-opacity="0.00" stroke="${primaryLangColor}" stroke-width="1"/>
+            <g>
+        ${connectionLines}
                 
                 ${constellation.map((node, i) => {
             const animationRadius = 1.5;
