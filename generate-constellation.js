@@ -15,11 +15,20 @@ async function generateConstellation() {
     const status = document.getElementById('status');
     const container = document.getElementById('container');
 
-
-
-    const headers = new Headers();
-
-    if (config.token) headers.append("Authorization", `token ${config.token}`);
+    // 1. Get the parameters from the URL (e.g., ?username=jdoe&displayName=JohnDoe)
+    const urlParams = new URLSearchParams(window.location.search);
+    const displayName = DOMPurify.sanitize(urlParams.get('displayName'));
+    const userName = DOMPurify.sanitize(urlParams.get('username'));
+    const terminalColor = DOMPurify.sanitize(urlParams.get('terminalColor'));
+    if (displayName) {
+        window.GITHUB_CONFIG.displayName = displayName;
+    }
+    if (userName) {
+        window.GITHUB_CONFIG.username = userName;
+    }
+    if (terminalColor) {
+        window.GITHUB_CONFIG.username = userName;
+    }
 
     try {
 
@@ -30,8 +39,8 @@ async function generateConstellation() {
 
         // Fetch repository data
         const [userRes, reposRes, eventsRes, gistsRes, starredRes, linguistRes] = await Promise.all([
-            fetch(`https://api.github.com/users/${config.username}`, { headers }),
-            fetch(`https://api.github.com/users/${config.username}/repos?per_page=100&sort=updated`, { headers }),
+            fetch(`https://api.github.com/users/${config.username}`),
+            fetch(`https://api.github.com/users/${config.username}/repos?per_page=100&sort=updated`),
             fetch(`https://api.github.com/users/${config.username}/events/public`),
             fetch(`https://api.github.com/users/${config.username}/gists`),
             fetch(`https://api.github.com/users/${config.username}/starred?per_page=500`),
