@@ -14,7 +14,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run ESLint (v10+) on generate-constellation.js
-        run: npx eslint@latest generate-constellation.js --no-config-lookup --language-options '{"globals": {"window": "readonly", "document": "readonly"}}'
+        run: |
+          npx eslint@latest generate-constellation.js \
+          --no-config-lookup \
+          --language-options '{"globals": {"window": "readonly", "document": "readonly"}}'
 
       - name: Lint HTML
         run: npx htmlhint "index.html"
