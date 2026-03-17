@@ -9,5 +9,5 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run ESLint without local install
-        run: npx eslint@latest generate-constellation.js --env browser --env es6
+      - name: Run ESLint (v10+)
+        run: npx eslint@latest generate-constellation.js --no-config-lookup --language-options '{"globals": {"window": "readonly", "document": "readonly"}}'
