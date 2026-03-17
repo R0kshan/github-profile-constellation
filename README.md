@@ -12,7 +12,7 @@ The number of nodes in the constellation are the number of repositories you have
 
 They are generated according to the number of repositories you've starred. The color and size are determined by how many stars those repositories have : the more stars they have the more blue they are.
 
-## TODO 
+## Future developement
 
-- Represent followers and poeple you are following ?
-- Gist representation ?
+- Represent followers and poeple you are following
+- Gist representation
