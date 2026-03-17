@@ -15,14 +15,10 @@ async function generateConstellation() {
     const status = document.getElementById('status');
     const container = document.getElementById('container');
 
-    // 1. Get the parameters from the URL (e.g., ?username=jdoe&displayName=JohnDoe)
+    // 1. Get the parameters from the URL (e.g., ?username=jdoe)
     const urlParams = new URLSearchParams(window.location.search);
-    const displayName = DOMPurify.sanitize(urlParams.get('displayName'));
     const userName = DOMPurify.sanitize(urlParams.get('username'));
     const terminalColor = DOMPurify.sanitize(urlParams.get('terminalColor'));
-    if (displayName) {
-        window.GITHUB_CONFIG.displayName = displayName;
-    }
     if (userName) {
         window.GITHUB_CONFIG.username = userName;
     }
@@ -98,8 +94,6 @@ async function generateConstellation() {
             const constellation = (repos && repos.length ? repos : Array(constellationNodesCount).fill({}));
 
             return constellation.map((repo, currentRepoIndex) => {
-
-                console.log('repo', repo);
 
                 const constellationRandNumGen = new Math.seedrandom(`${repo.size}-${repo.id}-${repo.created_at}-${repo.node_id}`);
                 const deterministicHash = constellationRandNumGen();
@@ -186,7 +180,7 @@ async function generateConstellation() {
         }).join('');
 
         const terminalOutput = [
-            `> constellation scan -name ${config.displayName}`,
+            `> constellation scan -name ${userInfo.name || config.username}`,
             `Running scan ...`,
             `Main composition: ${topThreeLanguages}`,
             `Observed by : https://github.com/R0kshan/github-profile-constellation`,
