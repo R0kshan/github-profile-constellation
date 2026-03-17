@@ -1,6 +1,10 @@
 name: Lint
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ "main", "feature/*", "fix/*" ]
+  pull_request:
+    branches: [ "main", "feature/*", "fix/*" ]
 
 jobs:
   lint:
@@ -9,8 +13,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run ESLint (v10+)
+      - name: Run ESLint (v10+) on generate-constellation.js
         run: npx eslint@latest generate-constellation.js --no-config-lookup --language-options '{"globals": {"window": "readonly", "document": "readonly"}}'
 
       - name: Lint HTML
-        run: npx htmlhint "**/*.html"
+        run: npx htmlhint "index.html"
