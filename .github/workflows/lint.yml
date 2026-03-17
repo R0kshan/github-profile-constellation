@@ -13,11 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run ESLint (v10+) on generate-constellation.js
+      - name: Run ESLint
         run: |
-          npx eslint@latest generate-constellation.js \
-          --no-config-lookup \
-          --language-options '{"globals": {"window": "readonly", "document": "readonly"}}'
+          npx eslint@8.x generate-constellation.js config.js \
+          --no-eslintrc \
+          --env browser \
+          --env es6 \
+          --rule '{"no-undef": "error", "no-unused-vars": "warn"}'
 
       - name: Lint HTML
         run: npx htmlhint "index.html"
