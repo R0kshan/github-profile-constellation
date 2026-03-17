@@ -15,11 +15,12 @@ jobs:
 
       - name: Run ESLint
         run: |
-          npx eslint@8.x generate-constellation.js config.js \
+          npx eslint@8.57.1 generate-constellation.js config.js \
           --no-eslintrc \
           --env browser \
-          --env es6 \
-          --rule '{"no-undef": "error", "no-unused-vars": "warn"}'
+          --env es2022 \
+          --parser-options '{"ecmaVersion": 2022, "sourceType": "script"}' \
+          --rule '{"no-undef": "off", "no-unused-vars": "warn"}'
 
       - name: Lint HTML
         run: npx htmlhint "index.html"

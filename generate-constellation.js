@@ -1,4 +1,4 @@
-const config = window.GITHUB_CONFIG;
+const config = window.CONFIG;
 let statusLines = [];
 
 function genRgbColorFromStargazerCount(count) {
@@ -20,10 +20,10 @@ async function generateConstellation() {
     const userName = DOMPurify.sanitize(urlParams.get('username'));
     const terminalColor = DOMPurify.sanitize(urlParams.get('terminalColor'));
     if (userName) {
-        window.GITHUB_CONFIG.username = userName;
+        window.CONFIG.username = userName;
     }
     if (terminalColor) {
-        window.GITHUB_CONFIG.username = userName;
+        window.CONFIG.username = userName;
     }
 
     try {
