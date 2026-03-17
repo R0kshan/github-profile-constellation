@@ -1,4 +1,4 @@
-name: Lint JavaScript
+name: Lint
 
 on: [push, pull_request]
 
@@ -11,3 +11,6 @@ jobs:
 
       - name: Run ESLint (v10+)
         run: npx eslint@latest generate-constellation.js --no-config-lookup --language-options '{"globals": {"window": "readonly", "document": "readonly"}}'
+
+      - name: Lint HTML
+        run: npx htmlhint "**/*.html"
