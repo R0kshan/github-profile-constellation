@@ -15,7 +15,7 @@ jobs:
 
       - name: Run ESLint
         run: |
-          npx eslint@8.57.1 generateConstellation.js \
+          npx eslint@8.57.1 lib/generateConstellation.js \
           --no-eslintrc \
           --env browser \
           --env es2022 \
