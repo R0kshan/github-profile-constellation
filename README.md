@@ -1,6 +1,6 @@
 # Github profile constellation (work in progress)
 
-Github constellation of your profile generated in pure Javascript & CSS. 
+Github constellation of your profile generated in pure Javascript & CSS.
 
 ## Elements
 
