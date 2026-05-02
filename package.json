@@ -1,0 +1,14 @@
+{
+  "repository": "https://github.com/R0kshan/vercel-svg-badge-example.git",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "js-yaml": "^4.1.1",
+    "seedrandom": "^3.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@vercel/node": "^5.0.0",
+    "typescript": "^5.0.0"
+  }
+}
