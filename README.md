@@ -1,18 +1,42 @@
-# Github profile constellation (work in progress)
+# GitHub Profile Constellation
 
-Github constellation of your profile generated in pure Javascript & CSS.
+A dynamic SVG constellation of your GitHub profile, hosted on Vercel.
 
-## Elements
+If you like space and want a change from Github Readme with stats with an evolving representation of your repository feel free to include this in your profile's readme !
 
-### Your constellation
+## Preview
 
-The number of nodes in the constellation are the number of repositories you have. The number of stars your repositories have will determine the size and blueness : the more stars they have the more blue they are.
+Preview on my profile available here : <https://github.com/R0kshan>
 
-### Stars in the background
+## Usage
 
-They are generated according to the number of repositories you've starred. The color and size are determined by how many stars those repositories have : the more stars they have the more blue they are.
+### Parameters
 
-## Future developement
+| Parameter | Default | Description |
+|---|---|---|
+| `username` | required | Your GitHub username |
+| `terminalColor` | `#96C7FF` | Color of the terminal text |
+
+### Example
+
+```
+<img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere"/>
+```
+
+If you want to customize the color of the terminal :
+
+```
+<img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&terminalColor=%234d4945"/>
+```
+
+**NB :** Replace '#' by '%23'
+
+## How it works
+
+- **Nodes** — one per repository. Size and blueness reflect stargazer count.
+- **Background stars** — generated from your starred repos, colored by their popularity (blueness is affect by number of stars received)
+
+## Ideas for future development
 
 - Represent followers and poeple you are following
-- Gist representation
+- Gist representation ?
