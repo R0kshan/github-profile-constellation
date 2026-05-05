@@ -1,21 +1,20 @@
 name: Lint
-
 on:
   push:
     branches: [ "main", "feature/*", "fix/*" ]
   pull_request:
     branches: [ "main", "feature/*", "fix/*" ]
-
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+      - name: Install ESLint and TypeScript parser
+        run: npm install --no-save eslint@8.57.1 @typescript-eslint/parser
       - name: Run ESLint
         run: |
-          npx eslint@8.57.1 lib/generateConstellation.ts \
+          ./node_modules/.bin/eslint lib/generateConstellation.ts \
           --no-eslintrc \
           --env browser \
           --env es2022 \
