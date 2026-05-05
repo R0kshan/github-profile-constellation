@@ -1,8 +1,7 @@
 # GitHub Profile Constellation
 
-A dynamic SVG constellation of your GitHub profile, hosted on Vercel.
-
-If you like space and want a change from Github Readme with stats with an evolving representation of your repository feel free to include this in your profile's readme !
+A dynamic SVG constellation of your GitHub profile, hosted on Vercel. It will evolve as you add more repositories, star repositories and if your own repositories get starred. 
+I made this for myself but feel free to use it and contribute if you're interested ! 
 
 ## Preview
 
@@ -35,6 +34,7 @@ If you want to customize the color of the terminal :
 
 - **Nodes** — one per repository. Size and blueness reflect stargazer count.
 - **Background stars** — generated from your starred repos, colored by their popularity (blueness is affect by number of stars received)
+- **Link between nodes **: the colors are a combination of the Github assigned color the your 3 most used languages
 
 ## Ideas for future development
 
