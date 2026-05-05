@@ -40,3 +40,17 @@ If you want to customize the color of the terminal :
 
 - Represent followers and poeple you are following
 - Gist representation ?
+
+## How to run locally 
+
+Install Vercel : 
+
+```
+npm install -g vercel
+```
+
+Then run :
+
+```
+vercel dev --debug
+```
