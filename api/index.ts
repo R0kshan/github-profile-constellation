@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-const { generateConstellation } = require('../lib/generateConstellation')
+import { generateConstellation } from '../lib/generateConstellation'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
 
