@@ -19,5 +19,6 @@ jobs:
           --no-eslintrc \
           --env browser \
           --env es2022 \
-          --parser-options '{"ecmaVersion": 2022, "sourceType": "script"}' \
+          --parser @typescript-eslint/parser \
+          --parser-options '{"ecmaVersion": 2022, "sourceType": "module"}' \
           --rule '{"no-undef": "off", "no-unused-vars": "warn"}'
