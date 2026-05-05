@@ -1,0 +1,11 @@
+#model: ollama/qwen3.5:122b
+model: ollama/deepseek-r1:70b
+#model: ollama/llama3.3:70b
+auto-commits: false
+read:
+  - ~/.cross-agent-guidance/be-honest-accurate-factual.md
+
+
+
+
+
