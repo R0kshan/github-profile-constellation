@@ -1,3 +1,5 @@
 .vercel
 .env.local
 node_modules
+.crush/*
+!.crush/skills
