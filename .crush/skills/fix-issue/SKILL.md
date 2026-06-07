@@ -50,3 +50,4 @@ disable-model-invocation: false
 - Template literal whitespace is preserved — indentation inside `` ` `` blocks adds to the final SVG
 - The project has **no tsconfig.json**, **no eslint config**, and **no test framework** — verify by inspection of rendered output only
 - `curl` is banned for HTTP requests — always use the `fetch` tool with `format='text'` to inspect responses
+- If context get too large, free the context with /free-context and re-read only the relevant files for the issue at hand
