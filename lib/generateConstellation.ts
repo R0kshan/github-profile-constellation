@@ -64,9 +64,9 @@ async function generateConstellation(userName: string, terminalColor: string): P
         }
     }
 
-    const primaryLangColor = languageColors[topThreeLanguages[0]] || languageColors[currentMostUsedLangInTheWorld];
-    const secondLangColor = languageColors[topThreeLanguages[1]] || languageColors[currentMostUsedLangInTheWorld];
-    const thirdLangColor = languageColors[topThreeLanguages[2]] || languageColors[currentMostUsedLangInTheWorld];
+    const primaryLangColor = languageColors[topThreeLanguages[0]] || languageColors[currentMostUsedLangInTheWorld] || "#ffffff";
+    const secondLangColor = languageColors[topThreeLanguages[1]] || languageColors[currentMostUsedLangInTheWorld] || "#ffffff";
+    const thirdLangColor = languageColors[topThreeLanguages[2]] || languageColors[currentMostUsedLangInTheWorld] || "#ffffff";
 
     const followers = userInfo.followers || 0;
     const floatDur = Math.max(3, 12 - Math.log10(followers + 1) * 3);
@@ -142,14 +142,26 @@ async function generateConstellation(userName: string, terminalColor: string): P
                 const y2 = constellation[toIdx].y;
 
                 lines.push(`
-            <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" 
-                  stroke="${thirdLangColor}" stroke-width="20" stroke-opacity="0.07" filter="url(#softGlow)" />
+            <g filter="url(#thirdLangGlow)">
+                <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" 
+                      stroke="${thirdLangColor}" stroke-width="20" stroke-opacity="0.07">
+                    <animate attributeName="opacity" values="0.05;0.1;0.05" dur="3s" repeatCount="indefinite" />
+                </line>
+            </g>
 
-            <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" 
-                  stroke="${secondLangColor}" stroke-width="5" stroke-opacity="0.07" filter="url(#softGlow)" />
+            <g filter="url(#secondLangGlow)">
+                <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" 
+                      stroke="${secondLangColor}" stroke-width="5" stroke-opacity="0.07">
+                    <animate attributeName="opacity" values="0.05;0.1;0.05" dur="3s" repeatCount="indefinite" />
+                </line>
+            </g>
 
-            <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" 
-                  stroke="${primaryLangColor}" stroke-width="2" stroke-opacity="0.8" filter="url(#softGlow)" />
+            <g filter="url(#softGlow)">
+                <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" 
+                      stroke="${primaryLangColor}" stroke-width="2" stroke-opacity="0.8">
+                    <animate attributeName="opacity" values="0.6;1;0.6" dur="1.5s" repeatCount="indefinite" />
+                </line>
+            </g>
         `);
             }
 
@@ -238,7 +250,7 @@ async function generateConstellation(userName: string, terminalColor: string): P
                     bottom: 20px;
                     font-size: 10px;
                     opacity: 0.4;
-                    font-family: Consolas;
+                    font-family: monospace;
                 }
 
                 a {
@@ -269,6 +281,26 @@ async function generateConstellation(userName: string, terminalColor: string): P
                 <filter id="lineGlow" x="-20%" y="-20%" width="140%" height="140%">
                     <feGaussianBlur stdDeviation="3" result="blur" />
                     <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+
+                <filter id="secondLangGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="6" result="blur" />
+                    <feFlood flood-color="${secondLangColor}" result="color" />
+                    <feComposite in="color" in2="blur" operator="in" result="glow" />
+                    <feMerge>
+                        <feMergeNode in="glow"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+
+                <filter id="thirdLangGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="6" result="blur" />
+                    <feFlood flood-color="${thirdLangColor}" result="color" />
+                    <feComposite in="color" in2="blur" operator="in" result="glow" />
+                    <feMerge>
+                        <feMergeNode in="glow"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
                 </filter>
 
                 <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
@@ -311,10 +343,10 @@ async function generateConstellation(userName: string, terminalColor: string): P
     }).join('')}
             </g>
         </g>
-        <text class ="status" x="10" y="${canvasHeight - 70}" font-family="Consolas" font-size="10px" text-anchor="start" fill="${terminalColor}" style="filter: url(#neonTextGlow);">
+        <text class ="status" x="10" y="${canvasHeight - 70}" font-family="monospace" font-size="10px" text-anchor="start" fill="${terminalColor}" style="filter: url(#neonTextGlow);">
             ${terminalOutput.map((line, i) => `<tspan x="20" dy="${i === 0 ? 0 : '1.4em'}">${line}</tspan>`).join('')}
         </text>
-        <text class ="status" x="10" y="${canvasHeight - 70}" font-family="Consolas" font-size="10px" text-anchor="start" fill="${terminalColor}" >
+        <text class ="status" x="10" y="${canvasHeight - 70}" font-family="monospace" font-size="10px" text-anchor="start" fill="${terminalColor}" >
             ${terminalOutput.map((line, i) => `<tspan x="20" dy="${i === 0 ? 0 : '1.4em'}">${line}</tspan>`).join('')}
         </text>
 
