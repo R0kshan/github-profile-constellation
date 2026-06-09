@@ -68,6 +68,10 @@ async function generateConstellation(userName: string, terminalColor: string): P
     const secondLangColor = languageColors[topThreeLanguages[1]] || languageColors[currentMostUsedLangInTheWorld];
     const thirdLangColor = languageColors[topThreeLanguages[2]] || languageColors[currentMostUsedLangInTheWorld];
 
+    console.log(`Primary language: ${topThreeLanguages[0]} (${primaryLangColor})`);
+    console.log(`Secondary language: ${topThreeLanguages[1]} (${secondLangColor})`);
+    console.log(`Tertiary language: ${topThreeLanguages[2]} (${thirdLangColor})`);  
+
     const followers = userInfo.followers || 0;
     const floatDur = Math.max(3, 12 - Math.log10(followers + 1) * 3);
     const prCount = events.filter(e => e.type === 'PushEvent').length;
@@ -238,7 +242,7 @@ async function generateConstellation(userName: string, terminalColor: string): P
                     bottom: 20px;
                     font-size: 10px;
                     opacity: 0.4;
-                    font-family: Consolas;
+                    font-family: monospace;
                 }
 
                 a {
@@ -311,10 +315,10 @@ async function generateConstellation(userName: string, terminalColor: string): P
     }).join('')}
             </g>
         </g>
-        <text class ="status" x="10" y="${canvasHeight - 70}" font-family="Consolas" font-size="10px" text-anchor="start" fill="${terminalColor}" style="filter: url(#neonTextGlow);">
+        <text class ="status" x="10" y="${canvasHeight - 70}" font-family="monospace" font-size="10px" text-anchor="start" fill="${terminalColor}" style="filter: url(#neonTextGlow);">
             ${terminalOutput.map((line, i) => `<tspan x="20" dy="${i === 0 ? 0 : '1.4em'}">${line}</tspan>`).join('')}
         </text>
-        <text class ="status" x="10" y="${canvasHeight - 70}" font-family="Consolas" font-size="10px" text-anchor="start" fill="${terminalColor}" >
+        <text class ="status" x="10" y="${canvasHeight - 70}" font-family="monospace" font-size="10px" text-anchor="start" fill="${terminalColor}" >
             ${terminalOutput.map((line, i) => `<tspan x="20" dy="${i === 0 ? 0 : '1.4em'}">${line}</tspan>`).join('')}
         </text>
 
