@@ -1,7 +1,7 @@
 # GitHub Profile Constellation
 
 A dynamic SVG constellation of your GitHub profile, hosted on Vercel. It will evolve as you add more repositories, star repositories and if your own repositories get starred. 
-I made this for myself but feel free to use it and contribute if you're interested ! 
+I wanted an alternative to Github stats so I made this for myself, but feel free to use it and contribute if you're interested.
 
 ## Preview
 
@@ -24,7 +24,7 @@ Preview using my Github profile :
 <img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere"/>
 ```
 
-If you want to customize the color of the terminal :
+To customize the color of the terminal :
 
 ```
 <img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&terminalColor=%234d4945"/>
