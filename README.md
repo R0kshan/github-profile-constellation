@@ -5,7 +5,9 @@ I made this for myself but feel free to use it and contribute if you're interest
 
 ## Preview
 
-Preview on my profile available here : <https://github.com/R0kshan>
+Preview using my Github profile :
+
+<img src="https://github-profile-constellation.vercel.app/?username=R0kshan"/>
 
 ## Usage
 
