@@ -13,7 +13,7 @@ The idea :
 - Distant ideas and knowledge enrich our work, just as distant stars illuminate the universe
 - Blue being the hottest color, a *hot* repository (whether it's yours or one you've starred) will shine brighter and bluer as it gets starred
 
-And what if one has just one repo ? It would be a "constellation" made of one star, but hey, all trees all came from seeds !
+And what if you only have one repo? A single star may look small on its own, but it’s the first spark of a future constellation.
 
 ## Ideas for future development
 
