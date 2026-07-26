@@ -6,12 +6,14 @@ Generates animated SVG "constellation" badges for GitHub user profiles, visualiz
 ## Architecture (single data flow)
 
 ```
-Request → api/index.ts (auth/validate/caching) → lib/generateConstellation.ts (6 parallel GitHub API fetches → SVG string generation)
+Request → api/index.ts (auth/validate/caching) → lib/generateConstellation.ts (4 parallel GitHub API fetches → SVG string generation)
 ```
 
 ### Key files
 - **`api/index.ts`** — Vercel handler. Validates `username` + optional `terminalColor`, applies input constraints, sets cache header (`public, max-age=3600`).
-- **`lib/generateConstellation.ts`** — Everything: fetches GitHub user/repos/events/gists/starred + linguist languages DB, computes deterministic SVG layout via seeded PRNG, assembles the full SVG template string. ~325 lines, monolithic function.
+- **`lib/generateConstellation.ts`** — Everything: fetches GitHub user/repos/starred + linguist languages DB, computes deterministic SVG layout via seeded PRNG, assembles the full SVG template string. Monolithic function.
+- **`tsconfig.json`** — TypeScript config with strict mode, `noEmit` (Vercel handles compilation).
+- **`.github/workflows/lint.yml`** — CI that runs `typecheck` and `lint` on every push/PR.
 
 ### How constellation nodes are computed
 Each repo becomes a `<circle>` node positioned around a radial spiral (not a simple circle — uses per-repo `seedrandom` for **deterministic but varied** radius via `repo.size`, `repo.id`, etc). Nodes connected by minimal spanning tree using Euclidean distance with a 35% canvas-width threshold. Twinkling animation durations are randomized based on stargazer count and deterministic hash.
@@ -19,25 +21,17 @@ Each repo becomes a `<circle>` node positioned around a radial spiral (not a sim
 ## Commands
 
 ```bash
-npm install             # install deps (Vercel deployment target)
+npm install             # install deps
+npm run typecheck       # TypeScript strict type check (tsc --noEmit)
+npm run lint            # ESLint on generateConstellation.ts
+npm run check           # both typecheck + lint
 ```
 
-There is no local dev server, test framework, or local lint config. Run the function by deploying to Vercel or using `vercel dev`.
-
-### Lint (matches CI in `.github/workflows/lint.yml`)
-```bash
-./node_modules/.bin/eslint lib/generateConstellation.ts \
-  --no-eslintrc \
-  --env browser \
-  --env es2022 \
-  --parser @typescript-eslint/parser \
-  --parser-options '{"ecmaVersion": 2022, "sourceType": "module"}' \
-  --rule '{"no-undef": "off", "no-unused-vars": "warn"}'
-```
+Run the function by deploying to Vercel or using `vercel dev`.
 
 ## Coding conventions
 
-- **TypeScript** with no `tsconfig.json` — compiler assumes default settings. Use ES modules (`import`/`export`).
+- **TypeScript** with strict mode (via `tsconfig.json`). Use ES modules (`import`/`export`).
 - Exports: named only (`export { generateConstellation }`). No default exports from source files.
 - Input validation in `api/index.ts`: username `/^[a-zA-Z0-9-]{1,39}$/`, color `/^#[0-9a-fA-F]{3,6}$/`. URL-encoded `#` must be unquoted: `.replace(/^%23/, '#')`.
 - SVG output: string template concatenation (not a library). Color interpolation and glow filters use inline FE composite SVG elements.
@@ -45,7 +39,7 @@ There is no local dev server, test framework, or local lint config. Run the func
 
 ## Gotchas & non-obvious details
 
-1. **No tsconfig.json, no eslint config, no tests.** Everything runs on Vercel's Node runtime. Don't add a build step — it's not needed for serverless deployment.
+1. **No build step.** Everything runs on Vercel's Node runtime. `tsconfig.json` uses `noEmit: true` — don't add a build step.
 
 2. **The `generateConstellation` function is pure except for the `GITHUB_TOKEN` env var** (used in the Authorization header for rate limiting). To test locally, set `GITHUB_TOKEN`.
 
@@ -57,4 +51,4 @@ There is no local dev server, test framework, or local lint config. Run the func
 
 6. **Background starfield** uses `randNumGen()` seeded from `userName + yearsActive` — so every user gets a unique consistent background pattern, not truly random stars.
 
-7. **No caching on the library side** beyond the response header. Each request recomputes everything from scratch (6 API calls + full SVG generation).
+7. **No caching on the library side** beyond the response header. Each request recomputes everything from scratch (4 API calls + full SVG generation).

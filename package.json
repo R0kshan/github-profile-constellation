@@ -2,6 +2,11 @@
   "repository": "https://github.com/R0kshan/vercel-svg-badge-example.git",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint lib/generateConstellation.ts --no-eslintrc --env browser --env es2022 --parser @typescript-eslint/parser --parser-options '{\"ecmaVersion\": 2022, \"sourceType\": \"module\"}' --rule '{\"no-undef\": \"off\", \"no-unused-vars\": \"warn\"}'",
+    "check": "npm run typecheck && npm run lint"
+  },
   "dependencies": {
     "js-yaml": "^4.1.1",
     "seedrandom": "^3.0.5"
@@ -11,6 +16,8 @@
     "@types/node": "^20.0.0",
     "@types/seedrandom": "^3.0.8",
     "@vercel/node": "^5.0.0",
+    "eslint": "^8.57.1",
+    "@typescript-eslint/parser": "^8.0.0",
     "typescript": "^5.0.0"
   }
 }

@@ -32,7 +32,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.setHeader('Content-Type', 'image/svg+xml')
         res.setHeader('Cache-Control', 'public, max-age=3600')
         return res.send(svg)
-    } catch (e) {
+    } catch {
         return res.status(500).json({ message: 'Failed to generate constellation' })
     }
 }
