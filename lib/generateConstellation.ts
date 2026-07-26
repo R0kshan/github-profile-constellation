@@ -6,6 +6,24 @@ import { GitHubRepo } from './types/GitHubRepo'
 import { LinguistEntry } from './types/LinguistEntry'
 import { ConstellationNode } from './types/ConstellationNode'
 
+async function fetchStarredPages(initialRes: Response, fetchInit: RequestInit | undefined): Promise<GitHubRepo[]> {
+    if (!initialRes.ok) return [];
+    const items: GitHubRepo[] = await initialRes.json();
+    const linkHeader = initialRes.headers.get('link');
+    const nextMatch = linkHeader?.match(/<([^>]+)>;\s*rel="next"/);
+    if (!nextMatch) return items;
+    let url = nextMatch[1];
+    while (url) {
+        const res = await fetch(url, fetchInit);
+        if (!res.ok) break;
+        items.push(...await res.json());
+        const nextLink = res.headers.get('link');
+        const nextLinkMatch = nextLink?.match(/<([^>]+)>;\s*rel="next"/);
+        url = nextLinkMatch ? nextLinkMatch[1] : '';
+    }
+    return items;
+}
+
 function genRgbColorFromStargazerCount(count: number): string {
     const progressiveBlueness = Math.log10(count + 1);
     const intensity = Math.min(progressiveBlueness / 3, 1);
@@ -37,34 +55,18 @@ async function generateConstellation(userName: string, terminalColor: string): P
     if (!userRes.ok) throw new Error(`GitHub user API returned ${userRes.status}`);
     if (!reposRes.ok) throw new Error(`GitHub repos API returned ${reposRes.status}`);
     if (!linguistRes.ok) throw new Error(`Linguist API returned ${linguistRes.status}`);
-    if (!starredRes.ok) throw new Error(`GitHub starred API returned ${starredRes.status}`);
-
     const userInfo: GitHubUser = await userRes.json();
     const repos: GitHubRepo[] = await reposRes.json();
     const linguist = jsyaml.load(await linguistRes.text()) as Record<string, LinguistEntry>;
 
-    const starred: GitHubRepo[] = [];
-    starred.push(...await starredRes.json());
-    let starredUrl: string | null = null;
-    const linkHeader = starredRes.headers.get('link');
-    const nextMatch = linkHeader?.match(/<([^>]+)>;\s*rel="next"/);
-    if (nextMatch) starredUrl = nextMatch[1];
-    while (starredUrl) {
-        const res = await fetch(starredUrl, fetchInit);
-        if (!res.ok) throw new Error(`GitHub starred API returned ${res.status}`);
-        starred.push(...await res.json());
-        const nextLink = res.headers.get('link');
-        const nextLinkMatch = nextLink?.match(/<([^>]+)>;\s*rel="next"/);
-        starredUrl = nextLinkMatch ? nextLinkMatch[1] : '';
-    }
+    const starred = await fetchStarredPages(starredRes, fetchInit);
 
     // Calculate top three most used languages
     const currentMostUsedLangInTheWorld = "Python";
 
     const languageCountKeyValueMap: Record<string, number> = {};
-    repos.forEach(repo => {
-        if (repo.language)
-            languageCountKeyValueMap[repo.language] = (languageCountKeyValueMap[repo.language] || 0) + 1;
+    repos.filter(repo => repo.language).forEach(repo => {
+        languageCountKeyValueMap[repo.language!] = (languageCountKeyValueMap[repo.language!] || 0) + 1;
     });
 
     const topThreeLanguages = Object.entries(languageCountKeyValueMap)
@@ -73,11 +75,9 @@ async function generateConstellation(userName: string, terminalColor: string): P
         .map(entry => entry[0]);
 
     const languageColors: Record<string, string> = {};
-    for (const lang in linguist) {
-        if (linguist[lang].color) {
-            languageColors[lang] = linguist[lang].color;
-        }
-    }
+    Object.entries(linguist)
+        .filter(([, entry]) => entry.color)
+        .forEach(([lang, entry]) => { languageColors[lang] = entry.color as string; });
 
     const primaryLangColor = languageColors[topThreeLanguages[0]] || languageColors[currentMostUsedLangInTheWorld] || "#ffffff";
     const secondLangColor = languageColors[topThreeLanguages[1]] || languageColors[currentMostUsedLangInTheWorld] || "#ffffff";
@@ -129,27 +129,16 @@ async function generateConstellation(userName: string, terminalColor: string): P
         const unreachable = [...Array(constellation.length).keys()].slice(1);
 
         while (unreachable.length > 0) {
-            let minDist = Infinity;
-            let bestFrom = -1;
-            let bestToIndex = -1;
+            const pairs = connected.flatMap(i =>
+                unreachable.map((toIdx, j) => ({ i, j, d: Math.hypot(constellation[i].x - constellation[toIdx].x, constellation[i].y - constellation[toIdx].y) }))
+            );
+            const best = pairs.reduce((min, p) => p.d < min.d ? p : min);
 
-            for (const i of connected) {
-                for (let j = 0; j < unreachable.length; j++) {
-                    const toIdx = unreachable[j];
-                    const d = Math.hypot(constellation[i].x - constellation[toIdx].x, constellation[i].y - constellation[toIdx].y);
-                    if (d < minDist) {
-                        minDist = d;
-                        bestFrom = i;
-                        bestToIndex = j;
-                    }
-                }
-            }
+            const toIdx = unreachable[best.j];
 
-            const toIdx = unreachable[bestToIndex];
-
-            if (minDist < canvasWidth * 0.35) {
-                const x1 = constellation[bestFrom].x;
-                const y1 = constellation[bestFrom].y;
+            if (best.d < canvasWidth * 0.35) {
+                const x1 = constellation[best.i].x;
+                const y1 = constellation[best.i].y;
                 const x2 = constellation[toIdx].x;
                 const y2 = constellation[toIdx].y;
 
@@ -178,7 +167,7 @@ async function generateConstellation(userName: string, terminalColor: string): P
             }
 
             connected.push(toIdx);
-            unreachable.splice(bestToIndex, 1);
+            unreachable.splice(best.j, 1);
         }
         return lines.join('');
     })();
