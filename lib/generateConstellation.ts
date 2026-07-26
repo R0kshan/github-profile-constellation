@@ -27,26 +27,35 @@ async function generateConstellation(userName: string, terminalColor: string): P
         ? { headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } }
         : undefined
 
-    const [userRes, reposRes, , , linguistRes] = await Promise.all([
+    const [userRes, reposRes, linguistRes, starredRes] = await Promise.all([
         fetch(`https://api.github.com/users/${userName}`, fetchInit),
         fetch(`https://api.github.com/users/${userName}/repos?per_page=100&sort=updated`, fetchInit),
-        fetch(`https://api.github.com/users/${userName}/events/public`, fetchInit),
-        fetch(`https://api.github.com/users/${userName}/gists`, fetchInit),
-        fetch(`https://raw.githubusercontent.com/github-linguist/linguist/master/lib/linguist/languages.yml`, fetchInit)
+        fetch(`https://raw.githubusercontent.com/github-linguist/linguist/master/lib/linguist/languages.yml`, fetchInit),
+        fetch(`https://api.github.com/users/${userName}/starred?per_page=100`, fetchInit)
     ]);
+
+    if (!userRes.ok) throw new Error(`GitHub user API returned ${userRes.status}`);
+    if (!reposRes.ok) throw new Error(`GitHub repos API returned ${reposRes.status}`);
+    if (!linguistRes.ok) throw new Error(`Linguist API returned ${linguistRes.status}`);
+    if (!starredRes.ok) throw new Error(`GitHub starred API returned ${starredRes.status}`);
 
     const userInfo: GitHubUser = await userRes.json();
     const repos: GitHubRepo[] = await reposRes.json();
     const linguist = jsyaml.load(await linguistRes.text()) as Record<string, LinguistEntry>;
 
     const starred: GitHubRepo[] = [];
-    let starredUrl = `https://api.github.com/users/${userName}/starred?per_page=100`;
+    starred.push(...await starredRes.json());
+    let starredUrl: string | null = null;
+    const linkHeader = starredRes.headers.get('link');
+    const nextMatch = linkHeader?.match(/<([^>]+)>;\s*rel="next"/);
+    if (nextMatch) starredUrl = nextMatch[1];
     while (starredUrl) {
         const res = await fetch(starredUrl, fetchInit);
+        if (!res.ok) throw new Error(`GitHub starred API returned ${res.status}`);
         starred.push(...await res.json());
-        const linkHeader = res.headers.get('link');
-        const nextMatch = linkHeader?.match(/<([^>]+)>;\s*rel="next"/);
-        starredUrl = nextMatch ? nextMatch[1] : '';
+        const nextLink = res.headers.get('link');
+        const nextLinkMatch = nextLink?.match(/<([^>]+)>;\s*rel="next"/);
+        starredUrl = nextLinkMatch ? nextLinkMatch[1] : '';
     }
 
     // Calculate top three most used languages
@@ -79,8 +88,7 @@ async function generateConstellation(userName: string, terminalColor: string): P
 
     const constellationNodesCount = repos.length;
 
-    const userSeed = userInfo.id || 0;
-    const randNumGen = seedrandom(`${userName}-${userSeed}`);
+    const randNumGen = seedrandom(`${userName}-${userInfo.id}`);
 
     const getConstellation = (scale: number, xOff: number, yOff: number): ConstellationNode[] => {
 

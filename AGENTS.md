@@ -6,12 +6,12 @@ Generates animated SVG "constellation" badges for GitHub user profiles, visualiz
 ## Architecture (single data flow)
 
 ```
-Request → api/index.ts (auth/validate/caching) → lib/generateConstellation.ts (6 parallel fetches — 5 GitHub API: user, repos, events, gists, starred + 1 raw Linguist YAML → SVG string generation)
+Request → api/index.ts (auth/validate/caching) → lib/generateConstellation.ts (4 parallel fetches — user, repos, starred (1st page) + Linguist YAML → paginated starred → SVG string generation)
 ```
 
 ### Key files
 - **`api/index.ts`** — Vercel handler. Validates `username` + optional `terminalColor`, applies input constraints, sets cache header (`public, max-age=3600`).
-- **`lib/generateConstellation.ts`** — Everything: fetches GitHub user/repos/events/gists/starred + raw Linguist YAML, computes deterministic SVG layout via seeded PRNG, assembles the full SVG template string.
+- **`lib/generateConstellation.ts`** — Everything: fetches GitHub user/repos/starred (paginated) + raw Linguist YAML, computes deterministic SVG layout via seeded PRNG, assembles the full SVG template string.
 - **`tsconfig.json`** — TypeScript strict mode, `noEmit` (Vercel handles compilation).
 - **`lib/types/`** — Per-interface type files (`GitHubUser`, `GitHubRepo`, `LinguistEntry`, `ConstellationNode`).
 - **`lib/__tests__/`** — Snapshot test with frozen `Date.now` and mocked GitHub/linguist API responses.
@@ -25,7 +25,7 @@ Each repo becomes a `<circle>` node positioned around a radial spiral (not a sim
 ```bash
 npm install             # install all deps
 npm run typecheck       # tsc --noEmit (strict mode)
-npm run lint            # ESLint on generateConstellation.ts
+npm run lint            # ESLint on api/ and lib/
 npm test                # vitest snapshot test
 npm run check           # typecheck + lint (fast prereq check)
 ```
@@ -39,7 +39,7 @@ Run the function locally via `vercel dev` or deploy to Vercel.
 - Exports: named only (`export { generateConstellation }`). No default exports from source files.
 - Input validation in `api/index.ts`: username `/^[a-zA-Z0-9-]{1,39}$/`, color `/^#[0-9a-fA-F]{3,6}$/`. URL-encoded `#` must be unquoted: `.replace(/^%23/, '#')`.
 - SVG output: string template concatenation (not a library). Color interpolation and glow filters use inline FE composite SVG elements.
-- All GitHub API calls batched in a single `Promise.all`; linguist languages DB fetched from raw GitHub to avoid maintaining a local dump.
+- User, repos, starred (first page), and linguist fetches batched in a single `Promise.all`; starred pagination follows sequentially. Each `fetch` response is validated with `res.ok` checks before parsing.
 
 ## Gotchas & non-obvious details
 
@@ -49,12 +49,12 @@ Run the function locally via `vercel dev` or deploy to Vercel.
 
 3. **Linguist colors** are fetched live from `github/linguist/master/lib/linguist/languages.yml`. New languages won't appear until this fetch runs again — not a bug, just how it works. Hardcoded fallback is `"Python"`.
 
-4. **Deterministic layouts**: Every node position and animation duration uses `seedrandom` with specific string seeds. Changing any part of the seed formula will shift all positions for a given user — intentional for consistent per-user profiles but surprising if debugging layout issues.
+4. **Deterministic layouts**: Every node position and animation duration uses `seedrandom` with specific string seeds (`${userName}-${userInfo.id}`). Changing any part of the seed formula will shift all positions for a given user — intentional for consistent per-user profiles but surprising if debugging layout issues.
 
 5. **`constellationNodesCount = repos.length`** is checked in `api/index.ts` validation but also used as padding when `repos` is empty (`Array(constellationNodesCount).fill({})`). The API can still generate output with an empty repo list.
 
-6. **Background starfield** uses `randNumGen()` seeded from `userName + yearsActive` — so every user gets a unique consistent background pattern, not truly random stars.
+6. **Background starfield** uses `randNumGen()` seeded from `${userName}-${userInfo.id}` — so every user gets a unique consistent background pattern, not truly random stars.
 
-7. **No caching on the library side** beyond the response header. Each request recomputes everything from scratch (6 fetches + full SVG generation).
+7. **No caching on the library side** beyond the response header. Each request recomputes everything from scratch (4 parallel fetches + paginated starred + full SVG generation).
 
 8. **Snapshot test freezes `Date.now()` and mocks all fetch calls** via fixture files in `lib/__tests__/__fixtures__/`. The fixtures are anonymized from real R0kshan GitHub data. Run `npm test` after any change to the SVG template to verify the output hasn't drifted. To update the snapshot: `npm test -- --update`.

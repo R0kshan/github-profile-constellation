@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "eslint lib/generateConstellation.ts",
+    "lint": "eslint \"api/**/*.ts\" \"lib/**/*.ts\"",
     "test": "vitest run",
     "check": "npm run typecheck && npm run lint"
   },
