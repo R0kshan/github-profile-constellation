@@ -11,6 +11,7 @@ function mockResponse(data: unknown, asText = false) {
   return {
     ok: true,
     status: 200,
+    headers: { get: () => null },
     json: () => Promise.resolve(data),
     text: () => Promise.resolve(asText ? (data as string) : JSON.stringify(data)),
   }

@@ -27,19 +27,27 @@ async function generateConstellation(userName: string, terminalColor: string): P
         ? { headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } }
         : undefined
 
-    const [userRes, reposRes, , , starredRes, linguistRes] = await Promise.all([
+    const [userRes, reposRes, , , linguistRes] = await Promise.all([
         fetch(`https://api.github.com/users/${userName}`, fetchInit),
         fetch(`https://api.github.com/users/${userName}/repos?per_page=100&sort=updated`, fetchInit),
         fetch(`https://api.github.com/users/${userName}/events/public`, fetchInit),
         fetch(`https://api.github.com/users/${userName}/gists`, fetchInit),
-        fetch(`https://api.github.com/users/${userName}/starred?per_page=500`, fetchInit),
         fetch(`https://raw.githubusercontent.com/github-linguist/linguist/master/lib/linguist/languages.yml`, fetchInit)
     ]);
 
     const userInfo: GitHubUser = await userRes.json();
     const repos: GitHubRepo[] = await reposRes.json();
-    const starred: GitHubRepo[] = await starredRes.json();
     const linguist = jsyaml.load(await linguistRes.text()) as Record<string, LinguistEntry>;
+
+    const starred: GitHubRepo[] = [];
+    let starredUrl = `https://api.github.com/users/${userName}/starred?per_page=100`;
+    while (starredUrl) {
+        const res = await fetch(starredUrl, fetchInit);
+        starred.push(...await res.json());
+        const linkHeader = res.headers.get('link');
+        const nextMatch = linkHeader?.match(/<([^>]+)>;\s*rel="next"/);
+        starredUrl = nextMatch ? nextMatch[1] : '';
+    }
 
     // Calculate top three most used languages
     const currentMostUsedLangInTheWorld = "Python";
@@ -70,10 +78,9 @@ async function generateConstellation(userName: string, terminalColor: string): P
     const floatDur = Math.max(3, 12 - Math.log10(followers + 1) * 3);
 
     const constellationNodesCount = repos.length;
-    const yearsActive = (Date.now() - new Date(userInfo.created_at).getTime()) / (1000 * 60 * 60 * 24 * 365.25);
 
-
-    const randNumGen = seedrandom(userName + yearsActive);
+    const userSeed = userInfo.id || 0;
+    const randNumGen = seedrandom(`${userName}-${userSeed}`);
 
     const getConstellation = (scale: number, xOff: number, yOff: number): ConstellationNode[] => {
 

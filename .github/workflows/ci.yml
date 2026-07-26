@@ -4,6 +4,8 @@ on:
     branches: [ "main", "feature/*", "fix/*", "chore/*" ]
   pull_request:
     branches: [ "main", "feature/*", "fix/*", "chore/*" ]
+permissions:
+  contents: read
 jobs:
   check:
     runs-on: ubuntu-latest
