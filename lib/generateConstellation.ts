@@ -1,32 +1,10 @@
 import jsyaml from 'js-yaml'
 import seedrandom from 'seedrandom'
 
-interface GitHubUser {
-  followers: number
-  created_at: string
-  name: string | null
-}
-
-interface GitHubRepo {
-  language: string | null
-  stargazers_count: number
-  size: number
-  id: number
-  created_at: string
-  node_id: string
-}
-
-interface LinguistEntry {
-  color?: string
-}
-
-interface ConstellationNode {
-  x: number
-  y: number
-  colorFromRepoLang: string
-  stargazerIntensity: number
-  colorFromRepoStargazer: string
-}
+import { GitHubUser } from './types/GitHubUser'
+import { GitHubRepo } from './types/GitHubRepo'
+import { LinguistEntry } from './types/LinguistEntry'
+import { ConstellationNode } from './types/ConstellationNode'
 
 function genRgbColorFromStargazerCount(count: number): string {
     const progressiveBlueness = Math.log10(count + 1);
