@@ -8,6 +8,10 @@ permissions:
   contents: read
 jobs:
   dependency-review:
+    # Compares the dependency manifest of a base ref against a head ref, so it
+    # only has the refs it needs on pull_request/merge_group events. On push it
+    # would fail with "Both a base ref and head ref must be provided".
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
