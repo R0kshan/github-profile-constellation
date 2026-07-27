@@ -51,7 +51,7 @@ If you want to customize the color of the terminal :
 
 - **Nodes** — one per repository. Size and blueness reflect stargazer count.
 - **Background stars** — generated from your starred repos, colored by their popularity (blueness is affect by number of stars received)
-- **Link between nodes **: the colors are a combination of the Github assigned color the your 3 most used languages
+- **Link between nodes**: the colors are a combination of the Github assigned color the your 3 most used languages
 
 ## How to run locally 
 
