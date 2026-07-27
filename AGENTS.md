@@ -20,8 +20,9 @@ Request → api/index.ts (validate) → lib/generateConstellation.ts
 - **`lib/__tests__/`** — Snapshot test with frozen `Date.now` and mocked GitHub/linguist API responses.
 - **`lib/package.json`** / **`api/package.json`** — Each contains `{ "type": "module" }` so Vercel Lambda recognizes compiled `.js` as ESM at runtime.
 - **`tsconfig.json`** — TypeScript strict mode, `noEmit: true` (Vercel handles compilation via `@vercel/node@^3.0.0`).
-- **`.github/workflows/code-quality.yml`** — Runs `typecheck`, `lint`, and `test` on push/PR to main, feature/*, fix/*, chore/*.
-- **`.github/workflows/security.yml`** — Runs zizmor (GitHub Actions security audit), dependency-review (checks new/updated deps for vulnerabilities), and CodeQL (JS/TS vulnerability analysis) on push/PR.
+- **`.github/workflows/ci.yml`** — Runs `typecheck`, `lint`, and `test` on push/PR to main, feature/*, fix/*, chore/*.
+- **`.github/workflows/supply-chain.yml`** — Runs zizmor (GitHub Actions security audit of workflow files) and dependency-review (checks new/updated deps for vulnerabilities) on push/PR.
+- **`.github/workflows/codeql.yml`** — CodeQL SAST (JavaScript/TypeScript vulnerability analysis) on push, PR, and weekly schedule.
 - **`.github/dependabot.yml`** — Weekly automated PRs for npm and GitHub Actions dependency updates.
 - **`vercel.json`** — URL rewrite: `/` → `/api/index`.
 - **`.eslintrc.json`** — `no-unused-vars: warn`, `no-undef: off` (TypeScript handles types).
