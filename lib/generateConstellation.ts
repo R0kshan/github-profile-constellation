@@ -1,10 +1,10 @@
 import jsyaml from 'js-yaml'
 import seedrandom from 'seedrandom'
 
-import { GitHubUser } from './types/GitHubUser'
-import { GitHubRepo } from './types/GitHubRepo'
-import { LinguistEntry } from './types/LinguistEntry'
-import { ConstellationNode } from './types/ConstellationNode'
+import type { GitHubUser } from './types/GitHubUser.js'
+import type { GitHubRepo } from './types/GitHubRepo.js'
+import type { LinguistEntry } from './types/LinguistEntry.js'
+import type { ConstellationNode } from './types/ConstellationNode.js'
 
 async function fetchStarredPages(initialRes: Response, fetchInit: RequestInit | undefined): Promise<GitHubRepo[]> {
     if (!initialRes.ok) return [];
