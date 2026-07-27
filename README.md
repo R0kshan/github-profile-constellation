@@ -20,9 +20,11 @@ And what if you only have one repo? A single star may look small on its own, but
 Without cluterring :
 - Represent followers and people you are following ?
 
-## Preview
+## Preview using my profile
 
-Preview on my profile available here : <https://github.com/R0kshan>
+<a href="https://github.com/R0kshan/github-profile-constellation">
+  <img src="https://github-profile-constellation.vercel.app/?username=R0kshan"/>
+</a>
 
 ## Usage
 
