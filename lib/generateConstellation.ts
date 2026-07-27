@@ -1,6 +1,29 @@
 import jsyaml from 'js-yaml'
 import seedrandom from 'seedrandom'
 
+import type { GitHubUser } from './types/GitHubUser.js'
+import type { GitHubRepo } from './types/GitHubRepo.js'
+import type { LinguistEntry } from './types/LinguistEntry.js'
+import type { ConstellationNode } from './types/ConstellationNode.js'
+
+async function fetchStarredPages(initialRes: Response, fetchInit: RequestInit | undefined): Promise<GitHubRepo[]> {
+    if (!initialRes.ok) return [];
+    const items: GitHubRepo[] = await initialRes.json();
+    const linkHeader = initialRes.headers.get('link');
+    const nextMatch = linkHeader?.match(/<([^>]+)>;\s*rel="next"/);
+    if (!nextMatch) return items;
+    let url = nextMatch[1];
+    while (url) {
+        const res = await fetch(url, fetchInit);
+        if (!res.ok) break;
+        items.push(...await res.json());
+        const nextLink = res.headers.get('link');
+        const nextLinkMatch = nextLink?.match(/<([^>]+)>;\s*rel="next"/);
+        url = nextLinkMatch ? nextLinkMatch[1] : '';
+    }
+    return items;
+}
+
 function genRgbColorFromStargazerCount(count: number): string {
     const progressiveBlueness = Math.log10(count + 1);
     const intensity = Math.min(progressiveBlueness / 3, 1);
@@ -12,57 +35,49 @@ function genRgbColorFromStargazerCount(count: number): string {
 
 async function generateConstellation(userName: string, terminalColor: string): Promise<string> {
     // Canvas configuration
-    let statusLines = [];
     let canvasWidth = 1000;
     let canvasHeight = 400;
     const canvasCenterX = (canvasWidth / 2) + 40;
     const canvasCenterY = (canvasHeight / 2) - 10;
 
     // Fetch repository data
-    const headers = process.env.GITHUB_TOKEN ? {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`
-    } : {}
+    const fetchInit: RequestInit | undefined = process.env.GITHUB_TOKEN
+        ? { headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } }
+        : undefined
 
-    const [userRes, reposRes, eventsRes, gistsRes, starredRes, linguistRes] = await Promise.all([
-        fetch(`https://api.github.com/users/${userName}`, { headers }),
-        fetch(`https://api.github.com/users/${userName}/repos?per_page=100&sort=updated`, { headers }),
-        fetch(`https://api.github.com/users/${userName}/events/public`, { headers }),
-        fetch(`https://api.github.com/users/${userName}/gists`, { headers }),
-        fetch(`https://api.github.com/users/${userName}/starred?per_page=500`, { headers }),
-        fetch(`https://raw.githubusercontent.com/github-linguist/linguist/master/lib/linguist/languages.yml`, { headers })
+    const [userRes, reposRes, linguistRes, starredRes] = await Promise.all([
+        fetch(`https://api.github.com/users/${userName}`, fetchInit),
+        fetch(`https://api.github.com/users/${userName}/repos?per_page=100&sort=updated`, fetchInit),
+        fetch(`https://raw.githubusercontent.com/github-linguist/linguist/master/lib/linguist/languages.yml`, fetchInit),
+        fetch(`https://api.github.com/users/${userName}/starred?per_page=100`, fetchInit)
     ]);
 
-    const userInfo = await userRes.json();
-    const repos = await reposRes.json();
-    const events = await eventsRes.json();
-    const gists = await gistsRes.json();
-    const starred = await starredRes.json();
-    const linguist = jsyaml.load(await linguistRes.text());
+    if (!userRes.ok) throw new Error(`GitHub user API returned ${userRes.status}`);
+    if (!reposRes.ok) throw new Error(`GitHub repos API returned ${reposRes.status}`);
+    if (!linguistRes.ok) throw new Error(`Linguist API returned ${linguistRes.status}`);
+    const userInfo: GitHubUser = await userRes.json();
+    const repos: GitHubRepo[] = await reposRes.json();
+    const linguist = jsyaml.load(await linguistRes.text()) as Record<string, LinguistEntry>;
+
+    const starred = await fetchStarredPages(starredRes, fetchInit);
 
     // Calculate top three most used languages
     const currentMostUsedLangInTheWorld = "Python";
 
-    const languageCountKeyValueMap = {};
-    repos.forEach(repo => {
-        if (repo.language)
-            languageCountKeyValueMap[repo.language] = (languageCountKeyValueMap[repo.language] || 0) + 1;
+    const languageCountKeyValueMap: Record<string, number> = {};
+    repos.filter(repo => repo.language).forEach(repo => {
+        languageCountKeyValueMap[repo.language!] = (languageCountKeyValueMap[repo.language!] || 0) + 1;
     });
-
-    const mostUsedLanguageByUser = Object.keys(languageCountKeyValueMap)
-        .reduce(
-            (currentKey, nextKey) => languageCountKeyValueMap[currentKey] > languageCountKeyValueMap[nextKey] ? currentKey : nextKey, currentMostUsedLangInTheWorld);
 
     const topThreeLanguages = Object.entries(languageCountKeyValueMap)
         .sort((currentEntry, nextEntry) => nextEntry[1] - currentEntry[1])
         .slice(0, 3)
         .map(entry => entry[0]);
 
-    const languageColors = {};
-    for (const lang in linguist) {
-        if (linguist[lang].color) {
-            languageColors[lang] = linguist[lang].color;
-        }
-    }
+    const languageColors: Record<string, string> = {};
+    Object.entries(linguist)
+        .filter(([, entry]) => entry.color)
+        .forEach(([lang, entry]) => { languageColors[lang] = entry.color as string; });
 
     const primaryLangColor = languageColors[topThreeLanguages[0]] || languageColors[currentMostUsedLangInTheWorld] || "#ffffff";
     const secondLangColor = languageColors[topThreeLanguages[1]] || languageColors[currentMostUsedLangInTheWorld] || "#ffffff";
@@ -70,21 +85,18 @@ async function generateConstellation(userName: string, terminalColor: string): P
 
     const followers = userInfo.followers || 0;
     const floatDur = Math.max(3, 12 - Math.log10(followers + 1) * 3);
-    const prCount = events.filter(e => e.type === 'PushEvent').length;
 
     const constellationNodesCount = repos.length;
-    const yearsActive = (new Date() - new Date(userInfo.created_at)) / (1000 * 60 * 60 * 24 * 365.25);
 
+    const randNumGen = seedrandom(`${userName}-${userInfo.id}`);
 
-    const randNumGen = new seedrandom(userName + yearsActive);
+    const getConstellation = (scale: number, xOff: number, yOff: number): ConstellationNode[] => {
 
-    const getConstellation = (scale, xOff, yOff) => {
+        const constellation = (repos && repos.length ? repos : Array(constellationNodesCount).fill({})) as GitHubRepo[];
 
-        const constellation = (repos && repos.length ? repos : Array(constellationNodesCount).fill({}));
+        return constellation.map((repo: GitHubRepo, currentRepoIndex: number) => {
 
-        return constellation.map((repo, currentRepoIndex) => {
-
-            const constellationRandNumGen = new seedrandom(`${repo.size}-${repo.id}-${repo.created_at}-${repo.node_id}`);
+            const constellationRandNumGen = seedrandom(`${repo.size}-${repo.id}-${repo.created_at}-${repo.node_id}`);
             const deterministicHash = constellationRandNumGen();
 
             const radius = (40 + (Math.pow(deterministicHash, 1.4) * 110)) * scale;
@@ -93,7 +105,7 @@ async function generateConstellation(userName: string, terminalColor: string): P
             const rawY = canvasCenterY + yOff + (radius * Math.sin(angle) * 0.6);
 
             const prevAngle = ((currentRepoIndex - 1) * Math.PI * 2) / constellation.length - Math.PI / 2;
-            const prevRadius = (40 + (Math.pow(new seedrandom(`${constellation[Math.max(0, currentRepoIndex-1)].size}-${constellation[Math.max(0, currentRepoIndex-1)].id}-${constellation[Math.max(0, currentRepoIndex-1)].created_at}-${constellation[Math.max(0, currentRepoIndex-1)].node_id}`)(), 1.4) * 110)) * scale;
+            const prevRadius = (40 + (Math.pow(seedrandom(`${constellation[Math.max(0, currentRepoIndex-1)].size}-${constellation[Math.max(0, currentRepoIndex-1)].id}-${constellation[Math.max(0, currentRepoIndex-1)].created_at}-${constellation[Math.max(0, currentRepoIndex-1)].node_id}`)(), 1.4) * 110)) * scale;
             const prevX = canvasCenterX + xOff + prevRadius * Math.cos(prevAngle);
             const tooClose = Math.abs(rawX - prevX) < 5;
             const x = tooClose ? rawX + (deterministicHash > 0.5 ? 15 : -15) : rawX;
@@ -117,27 +129,16 @@ async function generateConstellation(userName: string, terminalColor: string): P
         const unreachable = [...Array(constellation.length).keys()].slice(1);
 
         while (unreachable.length > 0) {
-            let minDist = Infinity;
-            let bestFrom = -1;
-            let bestToIndex = -1;
+            const pairs = connected.flatMap(i =>
+                unreachable.map((toIdx, j) => ({ i, j, d: Math.hypot(constellation[i].x - constellation[toIdx].x, constellation[i].y - constellation[toIdx].y) }))
+            );
+            const best = pairs.reduce((min, p) => p.d < min.d ? p : min);
 
-            for (const i of connected) {
-                for (let j = 0; j < unreachable.length; j++) {
-                    const toIdx = unreachable[j];
-                    const d = Math.hypot(constellation[i].x - constellation[toIdx].x, constellation[i].y - constellation[toIdx].y);
-                    if (d < minDist) {
-                        minDist = d;
-                        bestFrom = i;
-                        bestToIndex = j;
-                    }
-                }
-            }
+            const toIdx = unreachable[best.j];
 
-            const toIdx = unreachable[bestToIndex];
-
-            if (minDist < canvasWidth * 0.35) {
-                const x1 = constellation[bestFrom].x;
-                const y1 = constellation[bestFrom].y;
+            if (best.d < canvasWidth * 0.35) {
+                const x1 = constellation[best.i].x;
+                const y1 = constellation[best.i].y;
                 const x2 = constellation[toIdx].x;
                 const y2 = constellation[toIdx].y;
 
@@ -166,7 +167,7 @@ async function generateConstellation(userName: string, terminalColor: string): P
             }
 
             connected.push(toIdx);
-            unreachable.splice(bestToIndex, 1);
+            unreachable.splice(best.j, 1);
         }
         return lines.join('');
     })();
@@ -180,7 +181,6 @@ async function generateConstellation(userName: string, terminalColor: string): P
         const xPos = randNumGen() * canvasWidth;
         const yPos = randNumGen() * canvasHeight;
         const radius = 0.5 + (intensity * 2.5);
-        const r = 0.5 + randNumGen() * 1.5;
         const animDuration = 2 + randNumGen() * 4;
         return `<circle cx="${xPos}" cy="${yPos}" r="${radius}" fill="${dynamicColor}" opacity="0.8">
             <animate attributeName="opacity" values="0.1;0.7;0.1" dur="${animDuration}s" repeatCount="indefinite" />
@@ -331,7 +331,7 @@ async function generateConstellation(userName: string, terminalColor: string): P
                 <g>
             ${connectionLines}
                     
-            ${constellation.map((node, i) => {
+            ${constellation.map((node) => {
         const animationRadius = 1.5;
 
         const twinkleDuration = 1.5 + randNumGen() + node.stargazerIntensity;

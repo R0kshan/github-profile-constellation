@@ -1,0 +1,29 @@
+name: Lint
+on:
+  push:
+    branches: [ "main", "feature/*", "fix/*", "chore/*" ]
+  pull_request:
+    branches: [ "main", "feature/*", "fix/*", "chore/*" ]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+      - name: ESLint
+        run: npm run lint
+      - name: Snapshot test
+        run: npm test

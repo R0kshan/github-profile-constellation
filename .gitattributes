@@ -1,0 +1,13 @@
+# Normalize all text files to LF in the repository and in the working tree.
+# Prevents whole-file diffs when contributors work across Windows and Linux.
+* text=auto eol=lf
+
+# Explicitly binary — never touch these.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
