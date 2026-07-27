@@ -19,7 +19,7 @@
     "@vercel/node": "^3.0.0",
     "eslint": "^8.57.1",
     "@typescript-eslint/parser": "^8.0.0",
-    "typescript": "^5.0.0",
+    "typescript": "^7.0.2",
     "vitest": "^4.1.10"
   }
 }
