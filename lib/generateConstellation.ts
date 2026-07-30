@@ -271,10 +271,10 @@ async function generateConstellation(userName: string, terminalColor: string): P
                 }
 
                 .tui-border { stroke: #318a80; stroke-width: 1.5; fill: none; }
-                .tui-header { fill: #48c2b5; font-size: 13px; font-weight: bold; letter-spacing: 1px; }
-                .label { fill: #65d6c8; font-size: 14px; }
-                .value { fill: #c1fdf6; font-size: 14px; }
-                .value-indent { fill: #c1fdf6; font-size: 13px; }
+                .tui-header { fill: #48c2b5; font-size: 13px; font-weight: bold; letter-spacing: 1px; font-family: Consolas; }
+                .label { fill: #65d6c8; font-size: 14px; font-family: Consolas; }
+                .value { fill: #c1fdf6; font-size: 14px; font-family: Consolas; }
+                .value-indent { fill: #c1fdf6; font-size: 13px; font-family: Consolas; }
                 .crosshair { stroke: #2a615a; stroke-width: 1; opacity: 0.7; }
             </style>
 
@@ -335,8 +335,8 @@ async function generateConstellation(userName: string, terminalColor: string): P
                 </g>
             </g>
 
-            <path class="tui-border" d="M 15 20 H 25 M 195 20 H 340 A 4 4 0 0 1 344 24 V 146 A 4 4 0 0 1 340 150 H 19 A 4 4 0 0 1 15 146 V 24 A 4 4 0 0 1 19 20" />
-            <text x="30" y="24" class="tui-header">COSMIC CHART PROFILE</text>
+            <path class="tui-border" d="M 15 20 H 25 M 80 20 H 344 V 150 H 15 V 20" />
+            <text x="30" y="24" class="tui-header">CHART</text>
 
             <text x="30" y="55" class="label">Constellation:</text>
             <text x="175" y="55" class="value" font-weight="bold">${displayName}</text>
@@ -347,21 +347,21 @@ async function generateConstellation(userName: string, terminalColor: string): P
             <text x="30" y="111" class="label">Visible nodes:</text>
             <text x="175" y="111" class="value">${visibleNodes}</text>
 
-            <path class="tui-border" d="M 15 170 H 25 M 195 170 H 340 A 4 4 0 0 1 344 174 V 346 A 4 4 0 0 1 340 350 H 19 A 4 4 0 0 1 15 346 V 174 A 4 4 0 0 1 19 170" />
-            <text x="30" y="174" class="tui-header">ASTROMETRIC PROFILE</text>
+            <path class="tui-border" d="M 15 170 H 25 M 95 170 H 344 V 346 H 15 V 170" />
+            <text x="30" y="174" class="tui-header">PROFILE</text>
 
             <text x="30" y="212" class="label">Brightest star:</text>
             <text x="45" y="234" class="value-indent">${brightestStarName} (${brightestStarStars})</text>
 
             <text x="30" y="267" class="label">Total Luminosity: <tspan class="value">${totalLuminosity}</tspan></text>
 
-            <text x="30" y="300" class="label">Stellar Composition:</text>
+            <text x="30" y="300" class="label">Main composition:</text>
             <text x="45" y="322" class="value-indent">${stellarComposition}</text>
 
-            <path class="tui-border" d="M 358 20 H 368 M 553 20 H 981 A 4 4 0 0 1 985 24 V 346 A 4 4 0 0 1 981 350 H 362 A 4 4 0 0 1 358 346 V 24 A 4 4 0 0 1 362 20" />
-            <text x="373" y="24" class="tui-header">OBSERVATORY VIEWPORT</text>
+            <path class="tui-border" d="M 358 20 H 368 M 485 20 H 985 V 350 H 358 V 20" />
+            <text x="373" y="24" class="tui-header">CONSTELLATION</text>
 
-            <rect x="15" y="362" width="970" height="30" rx="4" class="tui-border" />
+            <rect x="15" y="362" width="970" height="30" class="tui-border" />
             <text x="30" y="382" class="label" font-weight="bold">&gt;</text>
             <rect x="44" y="370" width="2" height="13" fill="${terminalColor}" opacity="0.8">
                 <animate attributeName="opacity" values="0.8;0;0.8" dur="1.5s" repeatCount="indefinite" />
