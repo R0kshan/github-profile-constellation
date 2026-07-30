@@ -33,7 +33,7 @@ function genRgbColorFromStargazerCount(count: number): string {
     return `rgb(${rVal}, ${gVal}, ${bVal})`;
 }
 
-async function generateConstellation(userName: string, terminalColor: string): Promise<string> {
+async function generateConstellation(userName: string, terminalColor: string, showStargazers: boolean = true, showBorders: boolean = true): Promise<string> {
     const canvasWidth = 1000;
     const canvasHeight = 400;
 
@@ -218,7 +218,7 @@ async function generateConstellation(userName: string, terminalColor: string): P
 
     const totalLuminosity = repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
 
-    const stellarComposition = topThreeLanguages.slice(0, 2).join(' • ') || '—';
+    const stellarComposition = topThreeLanguages.slice(0, 3).join(' • ') || '—';
 
     const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}" viewBox="0 0 ${canvasWidth} ${canvasHeight}">
@@ -275,7 +275,6 @@ async function generateConstellation(userName: string, terminalColor: string): P
                 .label { fill: #65d6c8; font-size: 14px; font-family: Consolas; }
                 .value { fill: #c1fdf6; font-size: 14px; font-family: Consolas; }
                 .value-indent { fill: #c1fdf6; font-size: 13px; font-family: Consolas; }
-                .crosshair { stroke: #2a615a; stroke-width: 1; opacity: 0.7; }
             </style>
 
 <defs>
@@ -335,7 +334,7 @@ async function generateConstellation(userName: string, terminalColor: string): P
                 </g>
             </g>
 
-            <path class="tui-border" d="M 15 20 H 25 M 80 20 H 344 V 150 H 15 V 20" />
+            ${showBorders ? '<path class="tui-border" d="M 15 20 H 25 M 80 20 H 344 V 150 H 15 V 20" />' : ''}
             <text x="30" y="24" class="tui-header">CHART</text>
 
             <text x="30" y="55" class="label">Constellation:</text>
@@ -347,21 +346,22 @@ async function generateConstellation(userName: string, terminalColor: string): P
             <text x="30" y="111" class="label">Visible stars:</text>
             <text x="175" y="111" class="value">${visibleNodes}</text>
 
-            <path class="tui-border" d="M 15 170 H 25 M 95 170 H 344 V 346 H 15 V 170" />
+            ${showBorders ? '<path class="tui-border" d="M 15 170 H 25 M 95 170 H 344 V 346 H 15 V 170" />' : ''}
             <text x="30" y="174" class="tui-header">PROFILE</text>
 
-            <text x="30" y="212" class="label">Brightest star:</text>
-            <text x="45" y="234" class="value-indent">${brightestStarName} (${brightestStarStars})</text>
+            <text x="30" y="212" class="label">Main composition:</text>
+            <text x="45" y="234" class="value-indent">${stellarComposition}</text>
+            ${showStargazers ? `
+            <text x="30" y="267" class="label">Brightest star:</text>
+            <text x="45" y="289" class="value-indent">${brightestStarName} (${brightestStarStars})</text>
 
-            <text x="30" y="267" class="label">Total stargazers: <tspan class="value">${totalLuminosity}</tspan></text>
+            <text x="30" y="322" class="label">Total stargazers: <tspan class="value">${totalLuminosity}</tspan></text>
+            ` : ''}
 
-            <text x="30" y="300" class="label">Main composition:</text>
-            <text x="45" y="322" class="value-indent">${stellarComposition}</text>
-
-            <path class="tui-border" d="M 358 20 H 368 M 485 20 H 985 V 350 H 358 V 20" />
+            ${showBorders ? '<path class="tui-border" d="M 358 20 H 368 M 485 20 H 985 V 350 H 358 V 20" />' : ''}
             <text x="373" y="24" class="tui-header">CONSTELLATION</text>
 
-            <rect x="15" y="362" width="970" height="30" class="tui-border" />
+            ${showBorders ? '<rect x="15" y="362" width="970" height="30" class="tui-border" />' : ''}
             <text x="30" y="382" class="label" font-weight="bold">&gt;</text>
             <rect x="44" y="370" width="2" height="13" fill="${terminalColor}" opacity="0.8">
                 <animate attributeName="opacity" values="0.8;0;0.8" dur="1.5s" repeatCount="indefinite" />

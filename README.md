@@ -33,27 +33,36 @@ Without cluterring :
 | Parameter | Default | Description |
 |---|---|---|
 | `username` | required | Your GitHub username |
-| `terminalColor` | `#96C7FF` | Color of the terminal text |
+| `terminalColor` | `#96C7FF` | Color of the terminal cursor |
+| `showStargazers` | `1` | Show brightest star and total stargazers section (`0` to hide) |
+| `showBorders` | `1` | Show TUI panel borders (`0` to hide) |
 
-### Example
+### Examples
+
+Basic usage:
 
 ```
 <img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere"/>
 ```
 
-If you want to customize the color of the terminal :
+Custom terminal color (replace `#` with `%23`):
 
 ```
 <img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&terminalColor=%234d4945"/>
 ```
 
-**NB :** Replace '#' by '%23'
+Hide stargazer stats and TUI borders:
+
+```
+<img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&showStargazers=0&showBorders=0"/>
+```
 
 ## How it works
 
-- **Nodes** — one per repository. Size and blueness reflect stargazer count.
-- **Background stars** — generated from your starred repos, colored by their popularity (blueness is affect by number of stars received)
-- **Link between nodes**: the colors are a combination of the Github assigned color the your 3 most used languages
+- **Nodes** — one per repository. Size and blueness reflect stargazer count, connected by a minimal spanning tree.
+- **Background stars** — generated from your starred repos, colored by their popularity (blueness is affected by number of stars received).
+- **Links between nodes** — colored by your 3 most-used languages using GitHub-assigned language colors.
+- **TUI layout** — a terminal-inspired interface with a CHART panel (constellation name, coordinates, visible stars), a PROFILE panel (brightest star, total stargazers, main composition), and a CONSTELLATION viewport.
 
 ## How to run locally 
 
