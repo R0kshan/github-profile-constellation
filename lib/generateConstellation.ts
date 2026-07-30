@@ -344,7 +344,7 @@ async function generateConstellation(userName: string, terminalColor: string): P
             <text x="30" y="83" class="label">Coordinates:</text>
             <text x="175" y="83" class="value">${profileUrl}</text>
 
-            <text x="30" y="111" class="label">Visible nodes:</text>
+            <text x="30" y="111" class="label">Visible stars:</text>
             <text x="175" y="111" class="value">${visibleNodes}</text>
 
             <path class="tui-border" d="M 15 170 H 25 M 95 170 H 344 V 346 H 15 V 170" />
@@ -353,7 +353,7 @@ async function generateConstellation(userName: string, terminalColor: string): P
             <text x="30" y="212" class="label">Brightest star:</text>
             <text x="45" y="234" class="value-indent">${brightestStarName} (${brightestStarStars})</text>
 
-            <text x="30" y="267" class="label">Total Luminosity: <tspan class="value">${totalLuminosity}</tspan></text>
+            <text x="30" y="267" class="label">Total stargazers: <tspan class="value">${totalLuminosity}</tspan></text>
 
             <text x="30" y="300" class="label">Main composition:</text>
             <text x="45" y="322" class="value-indent">${stellarComposition}</text>
