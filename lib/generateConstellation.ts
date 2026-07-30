@@ -361,14 +361,9 @@ async function generateConstellation(userName: string, terminalColor: string): P
             <path class="tui-border" d="M 358 20 H 368 M 553 20 H 981 A 4 4 0 0 1 985 24 V 346 A 4 4 0 0 1 981 350 H 362 A 4 4 0 0 1 358 346 V 24 A 4 4 0 0 1 362 20" />
             <text x="373" y="24" class="tui-header">OBSERVATORY VIEWPORT</text>
 
-            <g class="crosshair">
-                <line x1="${viewportCenterX - 10}" y1="${viewportCenterY}" x2="${viewportCenterX + 10}" y2="${viewportCenterY}" />
-                <line x1="${viewportCenterX}" y1="${viewportCenterY - 10}" x2="${viewportCenterX}" y2="${viewportCenterY + 10}" />
-            </g>
-
             <rect x="15" y="362" width="970" height="30" rx="4" class="tui-border" />
             <text x="30" y="382" class="label" font-weight="bold">&gt;</text>
-            <rect x="44" y="370" width="7" height="13" fill="${terminalColor}" opacity="0.8">
+            <rect x="44" y="370" width="2" height="13" fill="${terminalColor}" opacity="0.8">
                 <animate attributeName="opacity" values="0.8;0;0.8" dur="1.5s" repeatCount="indefinite" />
             </rect>
         </svg>`;
