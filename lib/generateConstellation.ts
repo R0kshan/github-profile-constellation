@@ -81,7 +81,7 @@ function lightenColor(hex: string, amount: number): string {
     return `#${toHex(mix(r))}${toHex(mix(g))}${toHex(mix(b))}`;
 }
 
-async function generateConstellation(userName: string, showStargazers: boolean = true, showBorders: boolean = true, tuiColor: string = '#318a80'): Promise<string> {
+async function generateConstellation(userName: string, showStargazers: boolean = true, showBorders: boolean = true, tuiColor: string = '#318a80', fontFamily: string = 'Consolas', fontSize: number = 14): Promise<string> {
     const canvasWidth = 1000;
     const canvasHeight = 400;
 
@@ -278,10 +278,10 @@ async function generateConstellation(userName: string, showStargazers: boolean =
 
     const stellarComposition = escapeXml(topThreeLanguages.slice(0, 3).join(' • ') || '—');
 
-    const coordinatesNeedWrap = estimateTextWidth(profileUrl, 14) > leftPanelRightX - chartValueX;
-    const brightestStarsNeedWrap = estimateTextWidth(brightestStars, 13) > leftPanelRightX - 45;
+    const coordinatesNeedWrap = estimateTextWidth(profileUrl, fontSize) > leftPanelRightX - chartValueX;
+    const brightestStarsNeedWrap = estimateTextWidth(brightestStars, fontSize - 1) > leftPanelRightX - 45;
     const brightestStarsLines = brightestStarsNeedWrap
-        ? wrapValue(brightestStars, 13, leftPanelRightX - 45)
+        ? wrapValue(brightestStars, fontSize - 1, leftPanelRightX - 45)
         : [brightestStars];
 
     const chartRows = coordinatesNeedWrap ? `
@@ -365,10 +365,10 @@ async function generateConstellation(userName: string, showStargazers: boolean =
                 }
 
                 .tui-border { stroke: ${tuiColor}; stroke-width: 1.5; fill: none; }
-                .tui-header { fill: ${headerColor}; font-size: 13px; font-weight: bold; letter-spacing: 1px; font-family: Consolas; }
-                .label { fill: ${labelColor}; font-size: 14px; font-family: Consolas; }
-                .value { fill: ${valueColor}; font-size: 14px; font-family: Consolas; }
-                .value-indent { fill: ${valueColor}; font-size: 13px; font-family: Consolas; }
+                .tui-header { fill: ${headerColor}; font-size: ${fontSize - 1}px; font-weight: bold; letter-spacing: 1px; font-family: ${fontFamily}; }
+                .label { fill: ${labelColor}; font-size: ${fontSize}px; font-family: ${fontFamily}; }
+                .value { fill: ${valueColor}; font-size: ${fontSize}px; font-family: ${fontFamily}; }
+                .value-indent { fill: ${valueColor}; font-size: ${fontSize - 1}px; font-family: ${fontFamily}; }
             </style>
 
 <defs>
@@ -444,7 +444,7 @@ ${profileContent}
 
             ${showBorders ? '<rect x="15" y="362" width="970" height="30" class="tui-border" />' : ''}
             <text x="30" y="382" class="label" font-weight="bold">&gt;</text>
-            <rect x="44" y="370" width="2" height="13" fill="${valueColor}" opacity="0.8">
+            <rect x="44" y="370" width="2" height="${fontSize - 1}" fill="${valueColor}" opacity="0.8">
                 <animate attributeName="opacity" values="0.8;0;0.8" dur="1.5s" repeatCount="indefinite" />
             </rect>
         </svg>`;

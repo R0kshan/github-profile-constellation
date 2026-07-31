@@ -40,6 +40,8 @@ Without cluterring :
 |---|---|---|
 | `username` | required | Your GitHub username |
 | `tuiColor` | `318a80` | Color of the TUI panel borders and text (hex, without the `#` prefix) |
+| `fontFamily` | `Consolas` | Font family for the TUI text (e.g. `Arial`, `'Courier New'`, `monospace`) |
+| `fontSize` | `14` | Base font size in pixels (clamped to 8–40) |
 | `showStargazers` | `1` | Show brightest stars and total stargazers section (`0` to hide) |
 | `showBorders` | `1` | Show TUI panel borders (`0` to hide) |
 
@@ -61,6 +63,12 @@ Hide stargazer stats and TUI borders:
 
 ```html
 <img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&showStargazers=0&showBorders=0"/>
+```
+
+Custom font and size:
+
+```html
+<img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&fontFamily=Arial&fontSize=16"/>
 ```
 
 ## How to run locally 

@@ -3,7 +3,7 @@ import { generateConstellation, normalizeHexColor } from '../lib/generateConstel
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
 
-    const allowedParams = ['username', 'tuiColor', 'showStargazers', 'showBorders']
+    const allowedParams = ['username', 'tuiColor', 'showStargazers', 'showBorders', 'fontFamily', 'fontSize']
     const receivedParams = Object.keys(req.query)
     const hasUnknownParams = receivedParams.some(key => !allowedParams.includes(key))
 
@@ -11,11 +11,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(400).json({ message: 'Unexpected parameters' })
     }
 
-    const { username = '', tuiColor = '#318a80', showStargazers = '1', showBorders = '1' } = req.query
+    const { username = '', tuiColor = '#318a80', showStargazers = '1', showBorders = '1', fontFamily = 'Consolas', fontSize = '14' } = req.query
     const usernameStr = username as string
     const tuiColorStr = normalizeHexColor(tuiColor as string)
     const stargazersBool = (showStargazers as string) !== '0'
     const bordersBool = (showBorders as string) !== '0'
+    const fontFamilyStr = fontFamily as string
+    const fontSizeNum = Math.min(Math.max(parseInt(fontSize as string, 10), 8), 40)
 
     if (!usernameStr) {
         return res.status(400).json({ message: 'Username query parameter is required' })
@@ -33,8 +35,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(400).json({ message: 'showStargazers and showBorders must be 0 or 1' })
     }
 
+    if (!/^[a-zA-Z0-9 ,'"-]{1,50}$/.test(fontFamilyStr)) {
+        return res.status(400).json({ message: 'Invalid fontFamily' })
+    }
+
+    if (!/^\d{1,2}$/.test(fontSize as string)) {
+        return res.status(400).json({ message: 'Invalid fontSize' })
+    }
+
     try {
-        const svg = await generateConstellation(usernameStr, stargazersBool, bordersBool, tuiColorStr)
+        const svg = await generateConstellation(usernameStr, stargazersBool, bordersBool, tuiColorStr, fontFamilyStr, fontSizeNum)
         res.setHeader('Content-Type', 'image/svg+xml')
         res.setHeader('Cache-Control', 'public, max-age=3600')
         return res.send(svg)
