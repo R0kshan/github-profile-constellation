@@ -1,4 +1,5 @@
 export interface GitHubRepo {
+  name: string
   language: string | null
   stargazers_count: number
   size: number

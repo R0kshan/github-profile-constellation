@@ -1,5 +1,5 @@
 
-        <svg xmlns="http://www.w3.org/2000/svg"  width="1000" height="400" viewBox="0 0 1000 400">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400">
 
             <style>
                 body {
@@ -48,37 +48,14 @@
                     }
                 }
 
-                .status {
-                    position: absolute;
-                    bottom: 20px;
-                    font-size: 10px;
-                    opacity: 0.4;
-                    font-family: monospace;
-                }
-
-                a {
-                    text-decoration: underline;
-                }
-
-                @keyframes blink-cursor {
-
-                    0%,
-                    49% {
-                        fill-opacity: 1;
-                    }
-
-                    50%,
-                    100% {
-                        fill-opacity: 0;
-                    }
-                }
-
-                .cursor {
-                    animation: blink-cursor 1.5s infinite;
-                }
+                .tui-border { stroke: #318a80; stroke-width: 1.5; fill: none; }
+                .tui-header { fill: #48c2b5; font-size: 13px; font-weight: bold; letter-spacing: 1px; font-family: Consolas; }
+                .label { fill: #65d6c8; font-size: 14px; font-family: Consolas; }
+                .value { fill: #c1fdf6; font-size: 14px; font-family: Consolas; }
+                .value-indent { fill: #c1fdf6; font-size: 13px; font-family: Consolas; }
             </style>
 
-            <defs>
+<defs>
                 <filter id="neonGlow"><feGaussianBlur stdDeviation="3" result="blur" /><feComposite in="SourceGraphic" in2="blur" operator="over" /></filter>
                 
                 <filter id="lineGlow" x="-20%" y="-20%" width="140%" height="140%">
@@ -116,19 +93,15 @@
                     </feMerge>
                 </filter>
 
-                <filter id="neonTextGlow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="2" result="blur" />
-                    <feMerge>
-                        <feMergeNode in="blur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                    </feMerge>
-                </filter>
-
+                <clipPath id="viewportClip">
+                    <rect x="362" y="24" width="619" height="322" rx="4" ry="4" />
+                </clipPath>
             </defs>
 
             <rect width="1000" height="400" fill="#050505"/>
             
-            <g id="starfield"><circle cx="737.4074379497747" cy="41.77800679676366" r="3" fill="rgb(0, 242, 255)" opacity="0.8">
+            <g clip-path="url(#viewportClip)">
+                <g id="starfield"><circle cx="737.4074379497747" cy="41.77800679676366" r="3" fill="rgb(0, 242, 255)" opacity="0.8">
             <animate attributeName="opacity" values="0.1;0.7;0.1" dur="4.55089932775814s" repeatCount="indefinite" />
         </circle><circle cx="295.4694128024222" cy="337.6504586134808" r="3" fill="rgb(0, 242, 255)" opacity="0.8">
             <animate attributeName="opacity" values="0.1;0.7;0.1" dur="2.33777429242886s" repeatCount="indefinite" />
@@ -330,9 +303,9 @@
             <animate attributeName="opacity" values="0.1;0.7;0.1" dur="4.990502461421636s" repeatCount="indefinite" />
         </circle></g>
 
-            <g filter="url(#neonGlow)" style="animation: float 11.096910013008056s ease-in-out infinite;">
-                <g>
-            
+                <g transform="translate(164.19571137589116, 7.5248489897012405)" filter="url(#neonGlow)" style="animation: float 11.096910013008056s ease-in-out infinite;">
+                    <g>
+                
             <g filter="url(#thirdLangGlow)">
                 <line x1="540" y1="35.9345141733632" x2="583.5903915983588" y2="92.3910662998608" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -354,6 +327,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="583.5903915983588" y1="92.3910662998608" x2="612.2498766549081" y2="114.91572567586871" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -375,6 +349,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="612.2498766549081" y1="114.91572567586871" x2="661.5097100852504" y2="117.09417394884979" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -396,6 +371,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="661.5097100852504" y1="117.09417394884979" x2="670.7522094557777" y2="144.70610600414105" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -417,6 +393,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="670.7522094557777" y1="144.70610600414105" x2="629.1561601560886" y2="175.66640733154972" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -438,6 +415,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="629.1561601560886" y1="175.66640733154972" x2="622.6040254122687" y2="190" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -459,6 +437,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="622.6040254122687" y1="190" x2="610.5015975082944" y2="214.42246977982742" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -480,6 +459,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="610.5015975082944" y1="214.42246977982742" x2="598.3936928034948" y2="234.03621568209687" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -501,6 +481,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="540" y1="35.9345141733632" x2="466.5341527705865" y2="25.493035311241783" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -522,6 +503,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="466.5341527705865" y1="25.493035311241783" x2="399.13874250571257" y2="43.61268712111132" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -543,6 +525,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="399.13874250571257" y1="43.61268712111132" x2="331.63352184078565" y2="64.98011310447143" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -564,6 +547,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="598.3936928034948" y1="234.03621568209687" x2="593.775000807904" y2="310.41462111529296" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -585,6 +569,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="593.775000807904" y1="310.41462111529296" x2="540" y2="309.0983504771227" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -606,6 +591,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="540" y1="309.0983504771227" x2="514.6732470710176" y2="246.71243723302354" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -627,6 +613,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="514.6732470710176" y1="246.71243723302354" x2="497.74054262942974" y2="233.91731635967128" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -648,6 +635,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="593.775000807904" y1="310.41462111529296" x2="674.1928174584932" y2="329.45726670935574" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -669,6 +657,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="331.63352184078565" y1="64.98011310447143" x2="321.4497757076298" y2="152.45224360525117" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -690,6 +679,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="321.4497757076298" y1="152.45224360525117" x2="309.3499299761537" y2="190.00000000000003" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -711,6 +701,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="309.3499299761537" y1="190.00000000000003" x2="288.7943879068188" y2="230.38620453672024" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -732,6 +723,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="288.7943879068188" y1="230.38620453672024" x2="358.1226821527437" y2="253.00415105116036" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -753,6 +745,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="358.1226821527437" y1="253.00415105116036" x2="368.1310710893871" y2="293.12135734636786" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -774,6 +767,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="670.7522094557777" y1="144.70610600414105" x2="725.8141893413988" y2="219.8732571857629" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -795,6 +789,7 @@
                 </line>
             </g>
         
+
             <g filter="url(#thirdLangGlow)">
                 <line x1="497.74054262942974" y1="233.91731635967128" x2="429.16208922544683" y2="151.6046214267376" 
                       stroke="#3178c6" stroke-width="20" stroke-opacity="0.07">
@@ -816,111 +811,138 @@
                 </line>
             </g>
         
-                    
-            <circle cx="540" cy="35.9345141733632" r="3" fill="rgb(255, 255, 255)">
+                        
+                <circle cx="540" cy="35.9345141733632" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.880107340685737s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.880107340685737s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.880107340685737s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="583.5903915983588" cy="92.3910662998608" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.928394139290511s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.928394139290511s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.928394139290511s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="612.2498766549081" cy="114.91572567586871" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.760315305780716s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.760315305780716s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.760315305780716s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="661.5097100852504" cy="117.09417394884979" r="3.08" fill="rgb(117, 248, 255)">
                 <animate attributeName="r" values="1.5;3.08;1.5" dur="5.038023342343979s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.038023342343979s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.038023342343979s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="670.7522094557777" cy="144.70610600414105" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.741382079981479s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.741382079981479s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.741382079981479s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="629.1561601560886" cy="175.66640733154972" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.873433182100939s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.873433182100939s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.873433182100939s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="622.6040254122687" cy="190" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.265375381374758s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.265375381374758s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.265375381374758s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="725.8141893413988" cy="219.8732571857629" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.876139638653661s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.876139638653661s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.876139638653661s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="610.5015975082944" cy="214.42246977982742" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.530812152978137s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.530812152978137s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.530812152978137s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="598.3936928034948" cy="234.03621568209687" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.461851263423009s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.461851263423009s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.461851263423009s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="674.1928174584932" cy="329.45726670935574" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.950482657543765s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.950482657543765s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.950482657543765s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="593.775000807904" cy="310.41462111529296" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.83701553007822s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.83701553007822s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.83701553007822s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="540" cy="309.0983504771227" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.779270281023267s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.779270281023267s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.779270281023267s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="514.6732470710176" cy="246.71243723302354" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.687003473712248s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.687003473712248s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.687003473712248s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="497.74054262942974" cy="233.91731635967128" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.814758471310904s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.814758471310904s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.814758471310904s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="368.1310710893871" cy="293.12135734636786" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.464533225631338s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.464533225631338s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.464533225631338s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="358.1226821527437" cy="253.00415105116036" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.573953668326585s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.573953668326585s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.573953668326585s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="288.7943879068188" cy="230.38620453672024" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.580033538270305s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.580033538270305s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.580033538270305s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="309.3499299761537" cy="190.00000000000003" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.308264079086168s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.308264079086168s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.308264079086168s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="321.4497757076298" cy="152.45224360525117" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.294817056188535s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.294817056188535s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.294817056188535s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="429.16208922544683" cy="151.6046214267376" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.703098866091158s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.703098866091158s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.703098866091158s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="331.63352184078565" cy="64.98011310447143" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.026138744620145s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.026138744620145s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.026138744620145s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="399.13874250571257" cy="43.61268712111132" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.4707232602677545s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.4707232602677545s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.4707232602677545s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="466.5341527705865" cy="25.493035311241783" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.0877324722848085s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.0877324722848085s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.0877324722848085s" repeatCount="indefinite" />
                 </circle>
                 
+                </g>
+                </g>
             </g>
-        </g>
-        <text class ="status" x="10" y="330" font-family="monospace" font-size="10px" text-anchor="start" fill="#96C7FF" style="filter: url(#neonTextGlow);">
-            <tspan x="20" dy="0">> constellation scan -name Test User</tspan><tspan x="20" dy="1.4em">Running scan ...</tspan><tspan x="20" dy="1.4em">Main composition: Java,JavaScript,TypeScript</tspan><tspan x="20" dy="1.4em">Observed by : https://github.com/R0kshan/github-profile-constellation</tspan><tspan x="20" dy="1.4em">> <tspan class="cursor">|<animate attributeName="opacity" values="1;0;1" dur="1.5s" fill="#96C7FF" repeatCount="indefinite" /></tspan></tspan>
-        </text>
-        <text class ="status" x="10" y="330" font-family="monospace" font-size="10px" text-anchor="start" fill="#96C7FF" >
-            <tspan x="20" dy="0">> constellation scan -name Test User</tspan><tspan x="20" dy="1.4em">Running scan ...</tspan><tspan x="20" dy="1.4em">Main composition: Java,JavaScript,TypeScript</tspan><tspan x="20" dy="1.4em">Observed by : https://github.com/R0kshan/github-profile-constellation</tspan><tspan x="20" dy="1.4em">> <tspan class="cursor">|<animate attributeName="opacity" values="1;0;1" dur="1.5s" fill="#96C7FF" repeatCount="indefinite" /></tspan></tspan>
-        </text>
 
-    </svg>
+            <path class="tui-border" d="M 15 20 H 25 M 80 20 H 344 V 150 H 15 V 20" />
+            <text x="30" y="24" class="tui-header">CHART</text>
+
+            <text x="30" y="55" class="label">Constellation:</text>
+            <text x="175" y="55" class="value" font-weight="bold">Test User</text>
+
+            <text x="30" y="83" class="label">Coordinates:</text>
+            <text x="175" y="83" class="value">github.com/testuser</text>
+
+            <text x="30" y="111" class="label">Visible stars:</text>
+            <text x="175" y="111" class="value">24</text>
+
+            <path class="tui-border" d="M 15 170 H 25 M 95 170 H 344 V 346 H 15 V 170" />
+            <text x="30" y="174" class="tui-header">PROFILE</text>
+
+            <text x="30" y="212" class="label">Main composition:</text>
+            <text x="45" y="234" class="value-indent">Java • JavaScript • TypeScript</text>
+            
+            <text x="30" y="267" class="label">Brightest star:</text>
+            <text x="45" y="289" class="value-indent">repo-4 (40)</text>
+
+            <text x="30" y="322" class="label">Total stargazers: <tspan class="value">40</tspan></text>
+            
+
+            <path class="tui-border" d="M 358 20 H 368 M 485 20 H 985 V 350 H 358 V 20" />
+            <text x="373" y="24" class="tui-header">CONSTELLATION</text>
+
+            <rect x="15" y="362" width="970" height="30" class="tui-border" />
+            <text x="30" y="382" class="label" font-weight="bold">&gt;</text>
+            <rect x="44" y="370" width="2" height="13" fill="#96C7FF" opacity="0.8">
+                <animate attributeName="opacity" values="0.8;0;0.8" dur="1.5s" repeatCount="indefinite" />
+            </rect>
+        </svg>
