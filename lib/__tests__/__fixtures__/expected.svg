@@ -814,99 +814,99 @@
                         
                 <circle cx="540" cy="35.9345141733632" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.880107340685737s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.880107340685737s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.880107340685737s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="583.5903915983588" cy="92.3910662998608" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.928394139290511s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.928394139290511s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.928394139290511s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="612.2498766549081" cy="114.91572567586871" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.760315305780716s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.760315305780716s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.760315305780716s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="661.5097100852504" cy="117.09417394884979" r="3.08" fill="rgb(117, 248, 255)">
                 <animate attributeName="r" values="1.5;3.08;1.5" dur="5.038023342343979s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.038023342343979s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.038023342343979s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="670.7522094557777" cy="144.70610600414105" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.741382079981479s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.741382079981479s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.741382079981479s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="629.1561601560886" cy="175.66640733154972" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.873433182100939s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.873433182100939s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.873433182100939s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="622.6040254122687" cy="190" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.265375381374758s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.265375381374758s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.265375381374758s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="725.8141893413988" cy="219.8732571857629" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.876139638653661s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.876139638653661s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.876139638653661s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="610.5015975082944" cy="214.42246977982742" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.530812152978137s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.530812152978137s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.530812152978137s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="598.3936928034948" cy="234.03621568209687" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.461851263423009s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.461851263423009s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.461851263423009s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="674.1928174584932" cy="329.45726670935574" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.950482657543765s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.950482657543765s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.950482657543765s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="593.775000807904" cy="310.41462111529296" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.83701553007822s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.83701553007822s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.83701553007822s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="540" cy="309.0983504771227" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.779270281023267s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.779270281023267s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.779270281023267s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="514.6732470710176" cy="246.71243723302354" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.687003473712248s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.687003473712248s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.687003473712248s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="497.74054262942974" cy="233.91731635967128" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.814758471310904s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.814758471310904s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.814758471310904s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="368.1310710893871" cy="293.12135734636786" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.464533225631338s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.464533225631338s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.464533225631338s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="358.1226821527437" cy="253.00415105116036" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.573953668326585s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.573953668326585s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.573953668326585s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="288.7943879068188" cy="230.38620453672024" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.580033538270305s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.580033538270305s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.580033538270305s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="309.3499299761537" cy="190.00000000000003" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.308264079086168s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.308264079086168s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.308264079086168s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="321.4497757076298" cy="152.45224360525117" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.294817056188535s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.294817056188535s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.294817056188535s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="429.16208922544683" cy="151.6046214267376" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="4.703098866091158s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="4.703098866091158s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="4.703098866091158s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="331.63352184078565" cy="64.98011310447143" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.026138744620145s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.026138744620145s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.026138744620145s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="399.13874250571257" cy="43.61268712111132" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.4707232602677545s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.4707232602677545s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.4707232602677545s" repeatCount="indefinite" />
                 </circle>
                 <circle cx="466.5341527705865" cy="25.493035311241783" r="3" fill="rgb(255, 255, 255)">
                 <animate attributeName="r" values="1.5;3;1.5" dur="5.0877324722848085s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1.5;1.5;1.5" dur="5.0877324722848085s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="5.0877324722848085s" repeatCount="indefinite" />
                 </circle>
                 
                 </g>

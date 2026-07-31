@@ -41,19 +41,19 @@ Without cluterring :
 
 Basic usage:
 
-```
+```html
 <img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere"/>
 ```
 
 Custom terminal color (replace `#` with `%23`):
 
-```
+```html
 <img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&terminalColor=%234d4945"/>
 ```
 
 Hide stargazer stats and TUI borders:
 
-```
+```html
 <img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&showStargazers=0&showBorders=0"/>
 ```
 

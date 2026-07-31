@@ -33,6 +33,15 @@ function genRgbColorFromStargazerCount(count: number): string {
     return `rgb(${rVal}, ${gVal}, ${bVal})`;
 }
 
+function escapeXml(value: string): string {
+    return value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+}
+
 async function generateConstellation(userName: string, terminalColor: string, showStargazers: boolean = true, showBorders: boolean = true): Promise<string> {
     const canvasWidth = 1000;
     const canvasHeight = 400;
@@ -128,8 +137,8 @@ async function generateConstellation(userName: string, terminalColor: string, sh
 
     const xs = constellation.map(n => n.x);
     const ys = constellation.map(n => n.y);
-    const bboxCenterX = (Math.min(...xs) + Math.max(...xs)) / 2;
-    const bboxCenterY = (Math.min(...ys) + Math.max(...ys)) / 2;
+    const bboxCenterX = xs.length ? (Math.min(...xs) + Math.max(...xs)) / 2 : viewportCenterX;
+    const bboxCenterY = ys.length ? (Math.min(...ys) + Math.max(...ys)) / 2 : viewportCenterY;
     const translateX = viewportCenterX - bboxCenterX;
     const translateY = viewportCenterY - bboxCenterY;
 
@@ -201,24 +210,24 @@ async function generateConstellation(userName: string, terminalColor: string, sh
         const twinkleDuration = 1.5 + randNumGen() + node.stargazerIntensity;
         return `<circle cx="${node.x}" cy="${node.y}" r="${node.stargazerIntensity}" fill="${node.colorFromRepoStargazer}">
                 <animate attributeName="r" values="${animationRadius};${node.stargazerIntensity};${animationRadius}" dur="${twinkleDuration}s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="${animationRadius};${animationRadius};${animationRadius}" dur="${twinkleDuration}s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="${twinkleDuration}s" repeatCount="indefinite" />
                 </circle>
                 `;
     }).join('');
 
-    const displayName = userInfo.name || userName;
-    const profileUrl = `github.com/${userName}`;
+    const displayName = escapeXml(userInfo.name || userName);
+    const profileUrl = escapeXml(`github.com/${userName}`);
     const visibleNodes = repos.length;
 
     const brightestStar = repos.length > 0
         ? repos.reduce((max, r) => r.stargazers_count > max.stargazers_count ? r : max)
         : null;
-    const brightestStarName = brightestStar?.name || '—';
+    const brightestStarName = escapeXml(brightestStar?.name || '—');
     const brightestStarStars = brightestStar?.stargazers_count ?? 0;
 
     const totalLuminosity = repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
 
-    const stellarComposition = topThreeLanguages.slice(0, 3).join(' • ') || '—';
+    const stellarComposition = escapeXml(topThreeLanguages.slice(0, 3).join(' • ') || '—');
 
     const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}" viewBox="0 0 ${canvasWidth} ${canvasHeight}">
@@ -316,7 +325,7 @@ async function generateConstellation(userName: string, terminalColor: string, sh
                 </filter>
 
                 <clipPath id="viewportClip">
-                    <rect x="362" y="24" width="619" height="322" rx="4" ry="4" />
+                    <rect x="${viewportX + 4}" y="${viewportY + 4}" width="${viewportWidth - 8}" height="${viewportHeight - 8}" rx="4" ry="4" />
                 </clipPath>
             </defs>
 
