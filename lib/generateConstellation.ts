@@ -88,9 +88,12 @@ async function generateConstellation(userName: string, showStargazers: boolean =
     const constellationCenterX = (canvasWidth / 2) + 40;
     const constellationCenterY = (canvasHeight / 2) - 10;
 
-    const viewportX = 358;
+    const leftPanelRightX = 300;
+    const chartValueX = 160;
+    const constellationPanelRightX = canvasWidth - 15;
+    const viewportX = leftPanelRightX + 14;
     const viewportY = 20;
-    const viewportWidth = 627;
+    const viewportWidth = constellationPanelRightX - viewportX;
     const viewportHeight = 330;
     const viewportCenterX = viewportX + viewportWidth / 2;
     const viewportCenterY = viewportY + viewportHeight / 2;
@@ -275,10 +278,10 @@ async function generateConstellation(userName: string, showStargazers: boolean =
 
     const stellarComposition = escapeXml(topThreeLanguages.slice(0, 3).join(' • ') || '—');
 
-    const coordinatesNeedWrap = estimateTextWidth(profileUrl, 14) > 344 - 175;
-    const brightestStarsNeedWrap = estimateTextWidth(brightestStars, 13) > 344 - 45;
+    const coordinatesNeedWrap = estimateTextWidth(profileUrl, 14) > leftPanelRightX - chartValueX;
+    const brightestStarsNeedWrap = estimateTextWidth(brightestStars, 13) > leftPanelRightX - 45;
     const brightestStarsLines = brightestStarsNeedWrap
-        ? wrapValue(brightestStars, 13, 344 - 45)
+        ? wrapValue(brightestStars, 13, leftPanelRightX - 45)
         : [brightestStars];
 
     const chartRows = coordinatesNeedWrap ? `
@@ -286,27 +289,27 @@ async function generateConstellation(userName: string, showStargazers: boolean =
             <text x="45" y="105" class="value-indent">${profileUrl}</text>
 
             <text x="30" y="133" class="label">Visible stars:</text>
-            <text x="175" y="133" class="value">${visibleNodes}</text>` : `
+            <text x="${chartValueX}" y="133" class="value">${visibleNodes}</text>` : `
             <text x="30" y="83" class="label">Coordinates:</text>
-            <text x="175" y="83" class="value">${profileUrl}</text>
+            <text x="${chartValueX}" y="83" class="value">${profileUrl}</text>
 
             <text x="30" y="111" class="label">Visible stars:</text>
-            <text x="175" y="111" class="value">${visibleNodes}</text>`;
+            <text x="${chartValueX}" y="111" class="value">${visibleNodes}</text>`;
 
     const profileRowLines = [
-        `<text x="30" y="${brightestStarsNeedWrap ? 200 : 212}" class="label">Main composition:</text>`,
-        `<text x="45" y="${brightestStarsNeedWrap ? 222 : 234}" class="value-indent">${stellarComposition}</text>`
+        `<text x="30" y="${brightestStarsNeedWrap ? 198 : 212}" class="label">Main composition:</text>`,
+        `<text x="45" y="${brightestStarsNeedWrap ? 220 : 234}" class="value-indent">${stellarComposition}</text>`
     ];
     if (showStargazers) {
         profileRowLines.push('');
-        profileRowLines.push(`<text x="30" y="${brightestStarsNeedWrap ? 253 : 267}" class="label">Brightest stars:</text>`);
-        let valueY = brightestStarsNeedWrap ? 275 : 289;
+        profileRowLines.push(`<text x="30" y="${brightestStarsNeedWrap ? 248 : 270}" class="label">Brightest stars:</text>`);
+        let valueY = brightestStarsNeedWrap ? 270 : 292;
         for (const line of brightestStarsLines) {
             profileRowLines.push(`<text x="45" y="${valueY}" class="value-indent">${line}</text>`);
             valueY += 22;
         }
         profileRowLines.push('');
-        const totalY = brightestStarsNeedWrap ? Math.min(344, valueY) : 322;
+        const totalY = brightestStarsNeedWrap ? Math.min(346, valueY + 4) : 330;
         profileRowLines.push(`<text x="30" y="${totalY}" class="label">Total stargazers: <tspan class="value">${totalLuminosity}</tspan></text>`);
     }
     const profileContent = `\n${profileRowLines.map(line => line ? `            ${line}` : '').join('\n')}`;
@@ -425,19 +428,19 @@ async function generateConstellation(userName: string, showStargazers: boolean =
                 </g>
             </g>
 
-            ${showBorders ? '<path class="tui-border" d="M 15 20 H 25 M 80 20 H 344 V 150 H 15 V 20" />' : ''}
+            ${showBorders ? `<path class="tui-border" d="M 15 20 H 25 M 80 20 H ${leftPanelRightX} V 150 H 15 V 20" />` : ''}
             <text x="30" y="24" class="tui-header">CHART</text>
 
             <text x="30" y="55" class="label">Constellation:</text>
-            <text x="175" y="55" class="value" font-weight="bold">${displayName}</text>
+            <text x="${chartValueX}" y="55" class="value" font-weight="bold">${displayName}</text>
 ${chartRows}
 
-            ${showBorders ? '<path class="tui-border" d="M 15 170 H 25 M 95 170 H 344 V 346 H 15 V 170" />' : ''}
+            ${showBorders ? `<path class="tui-border" d="M 15 170 H 25 M 95 170 H ${leftPanelRightX} V 350 H 15 V 170" />` : ''}
             <text x="30" y="174" class="tui-header">PROFILE</text>
 ${profileContent}
 
-            ${showBorders ? '<path class="tui-border" d="M 358 20 H 368 M 485 20 H 985 V 350 H 358 V 20" />' : ''}
-            <text x="373" y="24" class="tui-header">CONSTELLATION</text>
+            ${showBorders ? `<path class="tui-border" d="M ${viewportX} 20 H ${viewportX + 10} M ${viewportX + 127} 20 H ${constellationPanelRightX} V 350 H ${viewportX} V 20" />` : ''}
+            <text x="${viewportX + 15}" y="24" class="tui-header">CONSTELLATION</text>
 
             ${showBorders ? '<rect x="15" y="362" width="970" height="30" class="tui-border" />' : ''}
             <text x="30" y="382" class="label" font-weight="bold">&gt;</text>
