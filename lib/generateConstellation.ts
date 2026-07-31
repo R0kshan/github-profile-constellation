@@ -142,6 +142,7 @@ async function generateConstellation(userName: string, showStargazers: boolean =
     const viewportY = 20;
     const viewportWidth = constellationPanelRightX - viewportX;
     const viewportHeight = 330;
+    const viewportPadding = 20;
     const viewportCenterX = viewportX + viewportWidth / 2;
     const viewportCenterY = viewportY + viewportHeight / 2;
 
@@ -235,6 +236,25 @@ async function generateConstellation(userName: string, showStargazers: boolean =
             ...node,
             x: constellationCenterX + (node.x - constellationCenterX) * scaleFactor,
             y: constellationCenterY + (node.y - constellationCenterY) * scaleFactor
+        }));
+        mstEdges = computeMstEdges(constellation);
+    }
+
+    const fitXs = constellation.map(n => n.x);
+    const fitYs = constellation.map(n => n.y);
+    const bboxWidth = fitXs.length ? Math.max(...fitXs) - Math.min(...fitXs) : 0;
+    const bboxHeight = fitYs.length ? Math.max(...fitYs) - Math.min(...fitYs) : 0;
+    const maxNodeRadius = constellation.length ? Math.max(...constellation.map(n => n.stargazerIntensity)) : 0;
+    const fitScale = Math.min(
+        (viewportWidth - 2 * (viewportPadding + maxNodeRadius)) / bboxWidth,
+        (viewportHeight - 2 * (viewportPadding + maxNodeRadius)) / bboxHeight,
+        1
+    );
+    if (fitScale < 1) {
+        constellation = constellation.map(node => ({
+            ...node,
+            x: constellationCenterX + (node.x - constellationCenterX) * fitScale,
+            y: constellationCenterY + (node.y - constellationCenterY) * fitScale
         }));
         mstEdges = computeMstEdges(constellation);
     }

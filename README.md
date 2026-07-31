@@ -17,7 +17,7 @@ And what if you only have one repo? A single star may look small on its own, but
 
 ### How it works
 
-- **Constellation stars** - one per repository. Size and blueness reflect stargazer count, connected by a minimal spanning tree. If the longest edge would exceed 35% of the canvas width, the constellation is scaled in so every edge stays within that limit and the graph always remains connected.
+- **Constellation stars** - one per repository. Size and blueness reflect stargazer count, connected by a minimal spanning tree. If the longest edge would exceed 35% of the canvas width, the constellation is scaled in so every edge stays within that limit and the graph always remains connected. It is also scaled to fit inside the Constellation panel with padding, so nodes never touch the borders.
 - **Background stars** - generated from your starred repos, colored by their popularity (blueness is affected by number of stars received).
 - **Links between nodes** - colored by your 3 most-used languages using GitHub-assigned language colors.
 
