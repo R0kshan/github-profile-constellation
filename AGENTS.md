@@ -14,7 +14,7 @@ Request → api/index.ts (validate) → lib/generateConstellation.ts
 ```
 
 ### Key files
-- **`api/index.ts`** — Vercel handler. Validates `username` + optional `terminalColor`, applies input regex, sets cache header (`public, max-age=3600`).
+- **`api/index.ts`** — Vercel handler. Validates `username` + optional `tuiColor`, `showStargazers`, `showBorders`, `fontFamily`, `fontSize`, applies input regex, sets cache header (`public, max-age=3600`).
 - **`lib/generateConstellation.ts`** — Core logic: 4 parallel fetches, paginated starred helper, language counting, MST layout, SVG template assembly.
 - **`lib/types/`** — Per-interface type files (`GitHubUser`, `GitHubRepo`, `LinguistEntry`, `ConstellationNode`).
 - **`lib/__tests__/`** — Snapshot test with frozen `Date.now` and mocked GitHub/linguist API responses.
@@ -29,7 +29,7 @@ Request → api/index.ts (validate) → lib/generateConstellation.ts
 - **`.gitattributes`** — `* text=auto eol=lf` to prevent cross-OS diff noise.
 
 ### How constellation nodes are computed
-Each repo becomes a `<circle>` node positioned around a radial spiral (not a simple circle — uses per-repo `seedrandom` for **deterministic but varied** radius via `repo.size`, `repo.id`, `repo.created_at`, `repo.node_id`). Nodes connected by minimal spanning tree (Prim's algorithm via `flatMap` + `reduce`) using Euclidean distance with a 35% canvas-width threshold. Twinkling animation durations are randomized based on stargazer count and `randNumGen()`.
+Each repo becomes a `<circle>` node positioned around a radial spiral (not a simple circle — uses per-repo `seedrandom` for **deterministic but varied** radius via `repo.size`, `repo.id`, `repo.created_at`, `repo.node_id`). Nodes connected by minimal spanning tree (Prim's algorithm via `flatMap` + `reduce`) using Euclidean distance. If the longest MST edge exceeds 35% of the canvas width, the whole constellation is scaled in (about its center) so all edges stay under the cutoff and the graph is always connected. Twinkling animation durations are randomized based on stargazer count and `randNumGen()`.
 
 ## Commands
 
@@ -51,7 +51,7 @@ Run the function locally via `vercel dev --debug` or deploy to Vercel.
 - **Interfaces** live in `lib/types/`, one file per interface, `export interface` declared inline.
 - **Exports**: named only (`export { generateConstellation }`). No default exports from source files.
 - **No nested if/for** — prefer early returns, `.filter().forEach()`, `flatMap` + `reduce`.
-- **Input validation** in `api/index.ts`: username `/^[a-zA-Z0-9-]{1,39}$/`, color `/^#[0-9a-fA-F]{3,6}$/`. URL-encoded `#` must be unquoted: `.replace(/^%23/, '#')`.
+- **Input validation** in `api/index.ts`: username `/^[a-zA-Z0-9-]{1,39}$/`, color normalized via `normalizeHexColor` (accepts bare hex, optional `#` or `%23` prefix) then checked with `/^#[0-9a-fA-F]{3,6}$/`, `fontFamily` `/^[a-zA-Z0-9 ,'"-]{1,50}$/`, `fontSize` `/^\d{1,2}$/` then clamped to 8–40.
 - **SVG output**: string template concatenation (not a library). Color interpolation and glow filters use inline FE composite SVG elements.
 - **Terminal text rendered twice**: once with `neonTextGlow` filter, once without — for readability on all backgrounds.
 - **User, repos, starred (first page), and linguist fetches** batched in a single `Promise.all`; starred pagination runs via the extracted `fetchStarredPages()` helper. Essential APIs (`user`, `repos`, `linguist`) validated with `res.ok` throws; starred endpoint failure degrades gracefully to empty array.

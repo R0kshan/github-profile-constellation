@@ -47,6 +47,72 @@ function normalizeHexColor(value: string): string {
     return hex.startsWith('#') ? hex : `#${hex}`;
 }
 
+function estimateTextWidth(text: string, fontSize: number): number {
+    return text.length * fontSize * 0.6;
+}
+
+function splitOversizedPart(part: string, fontSize: number, maxWidth: number): string[] {
+    const chunks: string[] = [];
+    let current = '';
+    let index = 0;
+    while (index < part.length) {
+        let unit = part[index];
+        if (part[index] === '&') {
+            const entityEnd = part.indexOf(';', index);
+            if (entityEnd !== -1) unit = part.slice(index, entityEnd + 1);
+        }
+        if (current && estimateTextWidth(current + unit, fontSize) > maxWidth) {
+            chunks.push(current);
+            current = unit;
+        } else {
+            current += unit;
+        }
+        index += unit.length;
+    }
+    if (current) chunks.push(current);
+    return chunks;
+}
+
+function wrapValue(text: string, fontSize: number, maxWidth: number, separator: string = ' • '): string[] {
+    const lines: string[] = [];
+    let current = '';
+    for (const part of text.split(separator)) {
+        const candidate = current ? `${current}${separator}${part}` : part;
+        if (estimateTextWidth(candidate, fontSize) <= maxWidth) {
+            current = candidate;
+            continue;
+        }
+        if (current) lines.push(current);
+        current = '';
+        if (estimateTextWidth(part, fontSize) <= maxWidth) {
+            current = part;
+        } else {
+            lines.push(...splitOversizedPart(part, fontSize, maxWidth));
+        }
+    }
+    if (current) lines.push(current);
+    return lines;
+}
+
+function computeMstEdges(nodes: ConstellationNode[]): { i: number; j: number; d: number }[] {
+    const edges: { i: number; j: number; d: number }[] = [];
+    const connected = [0];
+    const unreachable = [...Array(nodes.length).keys()].slice(1);
+
+    while (unreachable.length > 0) {
+        const pairs = connected.flatMap(i =>
+            unreachable.map((toIdx, j) => ({ i, j, d: Math.hypot(nodes[i].x - nodes[toIdx].x, nodes[i].y - nodes[toIdx].y) }))
+        );
+        const best = pairs.reduce((min, p) => p.d < min.d ? p : min);
+
+        edges.push({ i: best.i, j: unreachable[best.j], d: best.d });
+
+        connected.push(unreachable[best.j]);
+        unreachable.splice(best.j, 1);
+    }
+    return edges;
+}
+
 function lightenColor(hex: string, amount: number): string {
     const normalized = hex.replace(/^#/, '');
     const full = normalized.length === 3
@@ -61,16 +127,20 @@ function lightenColor(hex: string, amount: number): string {
     return `#${toHex(mix(r))}${toHex(mix(g))}${toHex(mix(b))}`;
 }
 
-async function generateConstellation(userName: string, showStargazers: boolean = true, showBorders: boolean = true, tuiColor: string = '#318a80'): Promise<string> {
+async function generateConstellation(userName: string, showStargazers: boolean = true, showBorders: boolean = true, tuiColor: string = '#318a80', fontFamily: string = 'Consolas', fontSize: number = 14): Promise<string> {
     const canvasWidth = 1000;
     const canvasHeight = 400;
 
     const constellationCenterX = (canvasWidth / 2) + 40;
     const constellationCenterY = (canvasHeight / 2) - 10;
 
-    const viewportX = 358;
+    const leftPanelRightX = 300;
+    const chartValueX = 160;
+    const maxBrightestStarsLines = 3;
+    const constellationPanelRightX = canvasWidth - 15;
+    const viewportX = leftPanelRightX + 14;
     const viewportY = 20;
-    const viewportWidth = 627;
+    const viewportWidth = constellationPanelRightX - viewportX;
     const viewportHeight = 330;
     const viewportCenterX = viewportX + viewportWidth / 2;
     const viewportCenterY = viewportY + viewportHeight / 2;
@@ -156,7 +226,18 @@ async function generateConstellation(userName: string, showStargazers: boolean =
         });
     };
 
-    const constellation = getConstellation(2, 0, 0);
+    let constellation = getConstellation(2, 0, 0);
+    let mstEdges = computeMstEdges(constellation);
+    const maxEdgeDistance = mstEdges.length ? Math.max(...mstEdges.map(edge => edge.d)) : 0;
+    if (maxEdgeDistance > canvasWidth * 0.35) {
+        const scaleFactor = (canvasWidth * 0.35 * 0.98) / maxEdgeDistance;
+        constellation = constellation.map(node => ({
+            ...node,
+            x: constellationCenterX + (node.x - constellationCenterX) * scaleFactor,
+            y: constellationCenterY + (node.y - constellationCenterY) * scaleFactor
+        }));
+        mstEdges = computeMstEdges(constellation);
+    }
 
     const xs = constellation.map(n => n.x);
     const ys = constellation.map(n => n.y);
@@ -165,26 +246,15 @@ async function generateConstellation(userName: string, showStargazers: boolean =
     const translateX = viewportCenterX - bboxCenterX;
     const translateY = viewportCenterY - bboxCenterY;
 
-    const connectionLines = (() => {
-        const lines = [];
-        const connected = [0];
-        const unreachable = [...Array(constellation.length).keys()].slice(1);
+    const connectionLines = mstEdges
+        .filter(edge => edge.d < canvasWidth * 0.35)
+        .map(edge => {
+            const x1 = constellation[edge.i].x;
+            const y1 = constellation[edge.i].y;
+            const x2 = constellation[edge.j].x;
+            const y2 = constellation[edge.j].y;
 
-        while (unreachable.length > 0) {
-            const pairs = connected.flatMap(i =>
-                unreachable.map((toIdx, j) => ({ i, j, d: Math.hypot(constellation[i].x - constellation[toIdx].x, constellation[i].y - constellation[toIdx].y) }))
-            );
-            const best = pairs.reduce((min, p) => p.d < min.d ? p : min);
-
-            const toIdx = unreachable[best.j];
-
-            if (best.d < canvasWidth * 0.35) {
-                const x1 = constellation[best.i].x;
-                const y1 = constellation[best.i].y;
-                const x2 = constellation[toIdx].x;
-                const y2 = constellation[toIdx].y;
-
-                lines.push(`
+            return `
             <g filter="url(#thirdLangGlow)">
                 <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" 
                       stroke="${thirdLangColor}" stroke-width="20" stroke-opacity="0.07">
@@ -205,14 +275,9 @@ async function generateConstellation(userName: string, showStargazers: boolean =
                     <animate attributeName="opacity" values="0.6;1;0.6" dur="1.5s" repeatCount="indefinite" />
                 </line>
             </g>
-        `);
-            }
-
-            connected.push(toIdx);
-            unreachable.splice(best.j, 1);
-        }
-        return lines.join('\n');
-    })();
+        `;
+        })
+        .join('\n');
 
     const stars = starred.map(star => {
         const count = star.stargazers_count || 0;
@@ -242,15 +307,57 @@ async function generateConstellation(userName: string, showStargazers: boolean =
     const profileUrl = escapeXml(`github.com/${userName}`);
     const visibleNodes = repos.length;
 
-    const brightestStar = repos.length > 0
-        ? repos.reduce((max, r) => r.stargazers_count > max.stargazers_count ? r : max)
-        : null;
-    const brightestStarName = escapeXml(brightestStar?.name || '—');
-    const brightestStarStars = brightestStar?.stargazers_count ?? 0;
+    const brightestStars = escapeXml(
+        repos
+            .filter(r => (r.stargazers_count || 0) >= 1)
+            .sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
+            .slice(0, 3)
+            .map(r => `${r.name} (${r.stargazers_count || 0})`)
+            .join(' • ') || '—'
+    );
 
     const totalLuminosity = repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
 
     const stellarComposition = escapeXml(topThreeLanguages.slice(0, 3).join(' • ') || '—');
+
+    const coordinatesNeedWrap = estimateTextWidth(profileUrl, fontSize) > leftPanelRightX - chartValueX;
+    const brightestStarsNeedWrap = estimateTextWidth(brightestStars, fontSize - 1) > leftPanelRightX - 45;
+    const unwrappedBrightestStarsLines = brightestStarsNeedWrap
+        ? wrapValue(brightestStars, fontSize - 1, leftPanelRightX - 45)
+        : [brightestStars];
+    const brightestStarsLines = unwrappedBrightestStarsLines.length > maxBrightestStarsLines
+        ? [...unwrappedBrightestStarsLines.slice(0, maxBrightestStarsLines - 1), `${unwrappedBrightestStarsLines[maxBrightestStarsLines - 1]}...`]
+        : unwrappedBrightestStarsLines;
+
+    const chartRows = coordinatesNeedWrap ? `
+            <text x="30" y="83" class="label">Coordinates:</text>
+            <text x="45" y="105" class="value-indent">${profileUrl}</text>
+
+            <text x="30" y="133" class="label">Visible stars:</text>
+            <text x="${chartValueX}" y="133" class="value">${visibleNodes}</text>` : `
+            <text x="30" y="83" class="label">Coordinates:</text>
+            <text x="${chartValueX}" y="83" class="value">${profileUrl}</text>
+
+            <text x="30" y="111" class="label">Visible stars:</text>
+            <text x="${chartValueX}" y="111" class="value">${visibleNodes}</text>`;
+
+    const profileRowLines = [
+        `<text x="30" y="${brightestStarsNeedWrap ? 198 : 212}" class="label">Main composition:</text>`,
+        `<text x="45" y="${brightestStarsNeedWrap ? 220 : 234}" class="value-indent">${stellarComposition}</text>`
+    ];
+    if (showStargazers) {
+        profileRowLines.push('');
+        profileRowLines.push(`<text x="30" y="${brightestStarsNeedWrap ? 248 : 270}" class="label">Brightest stars:</text>`);
+        let valueY = brightestStarsNeedWrap ? 270 : 292;
+        for (const line of brightestStarsLines) {
+            profileRowLines.push(`<text x="45" y="${valueY}" class="value-indent">${line}</text>`);
+            valueY += 22;
+        }
+        profileRowLines.push('');
+        const totalY = brightestStarsNeedWrap ? Math.min(346, valueY + 4) : 330;
+        profileRowLines.push(`<text x="30" y="${totalY}" class="label">Total stargazers: <tspan class="value">${totalLuminosity}</tspan></text>`);
+    }
+    const profileContent = `\n${profileRowLines.map(line => line ? `            ${line}` : '').join('\n')}`;
 
     const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}" viewBox="0 0 ${canvasWidth} ${canvasHeight}">
@@ -303,10 +410,10 @@ async function generateConstellation(userName: string, showStargazers: boolean =
                 }
 
                 .tui-border { stroke: ${tuiColor}; stroke-width: 1.5; fill: none; }
-                .tui-header { fill: ${headerColor}; font-size: 13px; font-weight: bold; letter-spacing: 1px; font-family: Consolas; }
-                .label { fill: ${labelColor}; font-size: 14px; font-family: Consolas; }
-                .value { fill: ${valueColor}; font-size: 14px; font-family: Consolas; }
-                .value-indent { fill: ${valueColor}; font-size: 13px; font-family: Consolas; }
+                .tui-header { fill: ${headerColor}; font-size: ${fontSize - 1}px; font-weight: bold; letter-spacing: 1px; font-family: ${fontFamily}; }
+                .label { fill: ${labelColor}; font-size: ${fontSize}px; font-family: ${fontFamily}; }
+                .value { fill: ${valueColor}; font-size: ${fontSize}px; font-family: ${fontFamily}; }
+                .value-indent { fill: ${valueColor}; font-size: ${fontSize - 1}px; font-family: ${fontFamily}; }
             </style>
 
 <defs>
@@ -366,36 +473,23 @@ async function generateConstellation(userName: string, showStargazers: boolean =
                 </g>
             </g>
 
-            ${showBorders ? '<path class="tui-border" d="M 15 20 H 25 M 80 20 H 344 V 150 H 15 V 20" />' : ''}
+            ${showBorders ? `<path class="tui-border" d="M 15 20 H 25 M 80 20 H ${leftPanelRightX} V 150 H 15 V 20" />` : ''}
             <text x="30" y="24" class="tui-header">CHART</text>
 
             <text x="30" y="55" class="label">Constellation:</text>
-            <text x="175" y="55" class="value" font-weight="bold">${displayName}</text>
+            <text x="${chartValueX}" y="55" class="value" font-weight="bold">${displayName}</text>
+${chartRows}
 
-            <text x="30" y="83" class="label">Coordinates:</text>
-            <text x="175" y="83" class="value">${profileUrl}</text>
-
-            <text x="30" y="111" class="label">Visible stars:</text>
-            <text x="175" y="111" class="value">${visibleNodes}</text>
-
-            ${showBorders ? '<path class="tui-border" d="M 15 170 H 25 M 95 170 H 344 V 346 H 15 V 170" />' : ''}
+            ${showBorders ? `<path class="tui-border" d="M 15 170 H 25 M 95 170 H ${leftPanelRightX} V 350 H 15 V 170" />` : ''}
             <text x="30" y="174" class="tui-header">PROFILE</text>
+${profileContent}
 
-            <text x="30" y="212" class="label">Main composition:</text>
-            <text x="45" y="234" class="value-indent">${stellarComposition}</text>
-            ${showStargazers ? `
-            <text x="30" y="267" class="label">Brightest star:</text>
-            <text x="45" y="289" class="value-indent">${brightestStarName} (${brightestStarStars})</text>
-
-            <text x="30" y="322" class="label">Total stargazers: <tspan class="value">${totalLuminosity}</tspan></text>
-            ` : ''}
-
-            ${showBorders ? '<path class="tui-border" d="M 358 20 H 368 M 485 20 H 985 V 350 H 358 V 20" />' : ''}
-            <text x="373" y="24" class="tui-header">CONSTELLATION</text>
+            ${showBorders ? `<path class="tui-border" d="M ${viewportX} 20 H ${viewportX + 10} M ${viewportX + 127} 20 H ${constellationPanelRightX} V 350 H ${viewportX} V 20" />` : ''}
+            <text x="${viewportX + 15}" y="24" class="tui-header">CONSTELLATION</text>
 
             ${showBorders ? '<rect x="15" y="362" width="970" height="30" class="tui-border" />' : ''}
             <text x="30" y="382" class="label" font-weight="bold">&gt;</text>
-            <rect x="44" y="370" width="2" height="13" fill="${valueColor}" opacity="0.8">
+            <rect x="44" y="370" width="2" height="${fontSize - 1}" fill="${valueColor}" opacity="0.8">
                 <animate attributeName="opacity" values="0.8;0;0.8" dur="1.5s" repeatCount="indefinite" />
             </rect>
         </svg>`;
