@@ -15,6 +15,12 @@ The idea :
 
 And what if you only have one repo? A single star may look small on its own, but it’s the first spark of a future constellation.
 
+### How it works
+
+- **Nodes** - one per repository. Size and blueness reflect stargazer count, connected by a minimal spanning tree.
+- **Background stars** - generated from your starred repos, colored by their popularity (blueness is affected by number of stars received).
+- **Links between nodes** - colored by your 3 most-used languages using GitHub-assigned language colors.
+
 ## Ideas for future development
 
 Without cluterring :
@@ -56,13 +62,6 @@ Hide stargazer stats and TUI borders:
 ```html
 <img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&showStargazers=0&showBorders=0"/>
 ```
-
-## How it works
-
-- **Nodes** — one per repository. Size and blueness reflect stargazer count, connected by a minimal spanning tree.
-- **Background stars** — generated from your starred repos, colored by their popularity (blueness is affected by number of stars received).
-- **Links between nodes** — colored by your 3 most-used languages using GitHub-assigned language colors.
-- **TUI layout** — a terminal-inspired interface with a CHART panel (constellation name, coordinates, visible stars), a PROFILE panel (brightest star, total stargazers, main composition), and a CONSTELLATION viewport.
 
 ## How to run locally 
 
