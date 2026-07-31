@@ -51,6 +51,28 @@ function estimateTextWidth(text: string, fontSize: number): number {
     return text.length * fontSize * 0.6;
 }
 
+function splitOversizedPart(part: string, fontSize: number, maxWidth: number): string[] {
+    const chunks: string[] = [];
+    let current = '';
+    let index = 0;
+    while (index < part.length) {
+        let unit = part[index];
+        if (part[index] === '&') {
+            const entityEnd = part.indexOf(';', index);
+            if (entityEnd !== -1) unit = part.slice(index, entityEnd + 1);
+        }
+        if (current && estimateTextWidth(current + unit, fontSize) > maxWidth) {
+            chunks.push(current);
+            current = unit;
+        } else {
+            current += unit;
+        }
+        index += unit.length;
+    }
+    if (current) chunks.push(current);
+    return chunks;
+}
+
 function wrapValue(text: string, fontSize: number, maxWidth: number, separator: string = ' • '): string[] {
     const lines: string[] = [];
     let current = '';
@@ -58,13 +80,37 @@ function wrapValue(text: string, fontSize: number, maxWidth: number, separator: 
         const candidate = current ? `${current}${separator}${part}` : part;
         if (estimateTextWidth(candidate, fontSize) <= maxWidth) {
             current = candidate;
-        } else {
-            if (current) lines.push(current);
+            continue;
+        }
+        if (current) lines.push(current);
+        current = '';
+        if (estimateTextWidth(part, fontSize) <= maxWidth) {
             current = part;
+        } else {
+            lines.push(...splitOversizedPart(part, fontSize, maxWidth));
         }
     }
     if (current) lines.push(current);
     return lines;
+}
+
+function computeMstEdges(nodes: ConstellationNode[]): { i: number; j: number; d: number }[] {
+    const edges: { i: number; j: number; d: number }[] = [];
+    const connected = [0];
+    const unreachable = [...Array(nodes.length).keys()].slice(1);
+
+    while (unreachable.length > 0) {
+        const pairs = connected.flatMap(i =>
+            unreachable.map((toIdx, j) => ({ i, j, d: Math.hypot(nodes[i].x - nodes[toIdx].x, nodes[i].y - nodes[toIdx].y) }))
+        );
+        const best = pairs.reduce((min, p) => p.d < min.d ? p : min);
+
+        edges.push({ i: best.i, j: unreachable[best.j], d: best.d });
+
+        connected.push(unreachable[best.j]);
+        unreachable.splice(best.j, 1);
+    }
+    return edges;
 }
 
 function lightenColor(hex: string, amount: number): string {
@@ -90,6 +136,7 @@ async function generateConstellation(userName: string, showStargazers: boolean =
 
     const leftPanelRightX = 300;
     const chartValueX = 160;
+    const maxBrightestStarsLines = 3;
     const constellationPanelRightX = canvasWidth - 15;
     const viewportX = leftPanelRightX + 14;
     const viewportY = 20;
@@ -179,7 +226,18 @@ async function generateConstellation(userName: string, showStargazers: boolean =
         });
     };
 
-    const constellation = getConstellation(2, 0, 0);
+    let constellation = getConstellation(2, 0, 0);
+    let mstEdges = computeMstEdges(constellation);
+    const maxEdgeDistance = mstEdges.length ? Math.max(...mstEdges.map(edge => edge.d)) : 0;
+    if (maxEdgeDistance > canvasWidth * 0.35) {
+        const scaleFactor = (canvasWidth * 0.35 * 0.98) / maxEdgeDistance;
+        constellation = constellation.map(node => ({
+            ...node,
+            x: constellationCenterX + (node.x - constellationCenterX) * scaleFactor,
+            y: constellationCenterY + (node.y - constellationCenterY) * scaleFactor
+        }));
+        mstEdges = computeMstEdges(constellation);
+    }
 
     const xs = constellation.map(n => n.x);
     const ys = constellation.map(n => n.y);
@@ -188,26 +246,15 @@ async function generateConstellation(userName: string, showStargazers: boolean =
     const translateX = viewportCenterX - bboxCenterX;
     const translateY = viewportCenterY - bboxCenterY;
 
-    const connectionLines = (() => {
-        const lines = [];
-        const connected = [0];
-        const unreachable = [...Array(constellation.length).keys()].slice(1);
+    const connectionLines = mstEdges
+        .filter(edge => edge.d < canvasWidth * 0.35)
+        .map(edge => {
+            const x1 = constellation[edge.i].x;
+            const y1 = constellation[edge.i].y;
+            const x2 = constellation[edge.j].x;
+            const y2 = constellation[edge.j].y;
 
-        while (unreachable.length > 0) {
-            const pairs = connected.flatMap(i =>
-                unreachable.map((toIdx, j) => ({ i, j, d: Math.hypot(constellation[i].x - constellation[toIdx].x, constellation[i].y - constellation[toIdx].y) }))
-            );
-            const best = pairs.reduce((min, p) => p.d < min.d ? p : min);
-
-            const toIdx = unreachable[best.j];
-
-            if (best.d < canvasWidth * 0.35) {
-                const x1 = constellation[best.i].x;
-                const y1 = constellation[best.i].y;
-                const x2 = constellation[toIdx].x;
-                const y2 = constellation[toIdx].y;
-
-                lines.push(`
+            return `
             <g filter="url(#thirdLangGlow)">
                 <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" 
                       stroke="${thirdLangColor}" stroke-width="20" stroke-opacity="0.07">
@@ -228,14 +275,9 @@ async function generateConstellation(userName: string, showStargazers: boolean =
                     <animate attributeName="opacity" values="0.6;1;0.6" dur="1.5s" repeatCount="indefinite" />
                 </line>
             </g>
-        `);
-            }
-
-            connected.push(toIdx);
-            unreachable.splice(best.j, 1);
-        }
-        return lines.join('\n');
-    })();
+        `;
+        })
+        .join('\n');
 
     const stars = starred.map(star => {
         const count = star.stargazers_count || 0;
@@ -280,9 +322,12 @@ async function generateConstellation(userName: string, showStargazers: boolean =
 
     const coordinatesNeedWrap = estimateTextWidth(profileUrl, fontSize) > leftPanelRightX - chartValueX;
     const brightestStarsNeedWrap = estimateTextWidth(brightestStars, fontSize - 1) > leftPanelRightX - 45;
-    const brightestStarsLines = brightestStarsNeedWrap
+    const unwrappedBrightestStarsLines = brightestStarsNeedWrap
         ? wrapValue(brightestStars, fontSize - 1, leftPanelRightX - 45)
         : [brightestStars];
+    const brightestStarsLines = unwrappedBrightestStarsLines.length > maxBrightestStarsLines
+        ? [...unwrappedBrightestStarsLines.slice(0, maxBrightestStarsLines - 1), `${unwrappedBrightestStarsLines[maxBrightestStarsLines - 1]}...`]
+        : unwrappedBrightestStarsLines;
 
     const chartRows = coordinatesNeedWrap ? `
             <text x="30" y="83" class="label">Coordinates:</text>

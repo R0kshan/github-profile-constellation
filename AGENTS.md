@@ -29,7 +29,7 @@ Request → api/index.ts (validate) → lib/generateConstellation.ts
 - **`.gitattributes`** — `* text=auto eol=lf` to prevent cross-OS diff noise.
 
 ### How constellation nodes are computed
-Each repo becomes a `<circle>` node positioned around a radial spiral (not a simple circle — uses per-repo `seedrandom` for **deterministic but varied** radius via `repo.size`, `repo.id`, `repo.created_at`, `repo.node_id`). Nodes connected by minimal spanning tree (Prim's algorithm via `flatMap` + `reduce`) using Euclidean distance with a 35% canvas-width threshold. Twinkling animation durations are randomized based on stargazer count and `randNumGen()`.
+Each repo becomes a `<circle>` node positioned around a radial spiral (not a simple circle — uses per-repo `seedrandom` for **deterministic but varied** radius via `repo.size`, `repo.id`, `repo.created_at`, `repo.node_id`). Nodes connected by minimal spanning tree (Prim's algorithm via `flatMap` + `reduce`) using Euclidean distance. If the longest MST edge exceeds 35% of the canvas width, the whole constellation is scaled in (about its center) so all edges stay under the cutoff and the graph is always connected. Twinkling animation durations are randomized based on stargazer count and `randNumGen()`.
 
 ## Commands
 

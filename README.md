@@ -17,7 +17,7 @@ And what if you only have one repo? A single star may look small on its own, but
 
 ### How it works
 
-- **Constellation stars** - one per repository. Size and blueness reflect stargazer count, connected by a minimal spanning tree.
+- **Constellation stars** - one per repository. Size and blueness reflect stargazer count, connected by a minimal spanning tree. If the longest edge would exceed 35% of the canvas width, the constellation is scaled in so every edge stays within that limit and the graph always remains connected.
 - **Background stars** - generated from your starred repos, colored by their popularity (blueness is affected by number of stars received).
 - **Links between nodes** - colored by your 3 most-used languages using GitHub-assigned language colors.
 
@@ -40,7 +40,7 @@ Without cluterring :
 |---|---|---|
 | `username` | required | Your GitHub username |
 | `tuiColor` | `318a80` | Color of the TUI panel borders and text (hex, without the `#` prefix) |
-| `fontFamily` | `Consolas` | Font family for the TUI text (e.g. `Arial`, `'Courier New'`, `monospace`) |
+| `fontFamily` | `Consolas` | Font family for the TUI text (e.g. `Arial`, `Courier New`, `monospace`) |
 | `fontSize` | `14` | Base font size in pixels (clamped to 8–40) |
 | `showStargazers` | `1` | Show brightest stars and total stargazers section (`0` to hide) |
 | `showBorders` | `1` | Show TUI panel borders (`0` to hide) |
@@ -68,7 +68,7 @@ Hide stargazer stats and TUI borders:
 Custom font and size:
 
 ```html
-<img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&fontFamily=Arial&fontSize=16"/>
+<img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&fontFamily=monospace&fontSize=16"/>
 ```
 
 ## How to run locally 
