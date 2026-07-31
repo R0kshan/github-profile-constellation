@@ -47,6 +47,26 @@ function normalizeHexColor(value: string): string {
     return hex.startsWith('#') ? hex : `#${hex}`;
 }
 
+function estimateTextWidth(text: string, fontSize: number): number {
+    return text.length * fontSize * 0.6;
+}
+
+function wrapValue(text: string, fontSize: number, maxWidth: number, separator: string = ' • '): string[] {
+    const lines: string[] = [];
+    let current = '';
+    for (const part of text.split(separator)) {
+        const candidate = current ? `${current}${separator}${part}` : part;
+        if (estimateTextWidth(candidate, fontSize) <= maxWidth) {
+            current = candidate;
+        } else {
+            if (current) lines.push(current);
+            current = part;
+        }
+    }
+    if (current) lines.push(current);
+    return lines;
+}
+
 function lightenColor(hex: string, amount: number): string {
     const normalized = hex.replace(/^#/, '');
     const full = normalized.length === 3
@@ -242,15 +262,54 @@ async function generateConstellation(userName: string, showStargazers: boolean =
     const profileUrl = escapeXml(`github.com/${userName}`);
     const visibleNodes = repos.length;
 
-    const brightestStar = repos.length > 0
-        ? repos.reduce((max, r) => r.stargazers_count > max.stargazers_count ? r : max)
-        : null;
-    const brightestStarName = escapeXml(brightestStar?.name || '—');
-    const brightestStarStars = brightestStar?.stargazers_count ?? 0;
+    const brightestStars = escapeXml(
+        repos
+            .filter(r => (r.stargazers_count || 0) >= 1)
+            .sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
+            .slice(0, 3)
+            .map(r => `${r.name} (${r.stargazers_count || 0})`)
+            .join(' • ') || '—'
+    );
 
     const totalLuminosity = repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
 
     const stellarComposition = escapeXml(topThreeLanguages.slice(0, 3).join(' • ') || '—');
+
+    const coordinatesNeedWrap = estimateTextWidth(profileUrl, 14) > 344 - 175;
+    const brightestStarsNeedWrap = estimateTextWidth(brightestStars, 13) > 344 - 45;
+    const brightestStarsLines = brightestStarsNeedWrap
+        ? wrapValue(brightestStars, 13, 344 - 45)
+        : [brightestStars];
+
+    const chartRows = coordinatesNeedWrap ? `
+            <text x="30" y="83" class="label">Coordinates:</text>
+            <text x="45" y="105" class="value-indent">${profileUrl}</text>
+
+            <text x="30" y="133" class="label">Visible stars:</text>
+            <text x="175" y="133" class="value">${visibleNodes}</text>` : `
+            <text x="30" y="83" class="label">Coordinates:</text>
+            <text x="175" y="83" class="value">${profileUrl}</text>
+
+            <text x="30" y="111" class="label">Visible stars:</text>
+            <text x="175" y="111" class="value">${visibleNodes}</text>`;
+
+    const profileRowLines = [
+        `<text x="30" y="${brightestStarsNeedWrap ? 200 : 212}" class="label">Main composition:</text>`,
+        `<text x="45" y="${brightestStarsNeedWrap ? 222 : 234}" class="value-indent">${stellarComposition}</text>`
+    ];
+    if (showStargazers) {
+        profileRowLines.push('');
+        profileRowLines.push(`<text x="30" y="${brightestStarsNeedWrap ? 253 : 267}" class="label">Brightest stars:</text>`);
+        let valueY = brightestStarsNeedWrap ? 275 : 289;
+        for (const line of brightestStarsLines) {
+            profileRowLines.push(`<text x="45" y="${valueY}" class="value-indent">${line}</text>`);
+            valueY += 22;
+        }
+        profileRowLines.push('');
+        const totalY = brightestStarsNeedWrap ? Math.min(344, valueY) : 322;
+        profileRowLines.push(`<text x="30" y="${totalY}" class="label">Total stargazers: <tspan class="value">${totalLuminosity}</tspan></text>`);
+    }
+    const profileContent = `\n${profileRowLines.map(line => line ? `            ${line}` : '').join('\n')}`;
 
     const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}" viewBox="0 0 ${canvasWidth} ${canvasHeight}">
@@ -371,24 +430,11 @@ async function generateConstellation(userName: string, showStargazers: boolean =
 
             <text x="30" y="55" class="label">Constellation:</text>
             <text x="175" y="55" class="value" font-weight="bold">${displayName}</text>
-
-            <text x="30" y="83" class="label">Coordinates:</text>
-            <text x="175" y="83" class="value">${profileUrl}</text>
-
-            <text x="30" y="111" class="label">Visible stars:</text>
-            <text x="175" y="111" class="value">${visibleNodes}</text>
+${chartRows}
 
             ${showBorders ? '<path class="tui-border" d="M 15 170 H 25 M 95 170 H 344 V 346 H 15 V 170" />' : ''}
             <text x="30" y="174" class="tui-header">PROFILE</text>
-
-            <text x="30" y="212" class="label">Main composition:</text>
-            <text x="45" y="234" class="value-indent">${stellarComposition}</text>
-            ${showStargazers ? `
-            <text x="30" y="267" class="label">Brightest star:</text>
-            <text x="45" y="289" class="value-indent">${brightestStarName} (${brightestStarStars})</text>
-
-            <text x="30" y="322" class="label">Total stargazers: <tspan class="value">${totalLuminosity}</tspan></text>
-            ` : ''}
+${profileContent}
 
             ${showBorders ? '<path class="tui-border" d="M 358 20 H 368 M 485 20 H 985 V 350 H 358 V 20" />' : ''}
             <text x="373" y="24" class="tui-header">CONSTELLATION</text>

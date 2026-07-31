@@ -930,12 +930,11 @@
 
             <text x="30" y="212" class="label">Main composition:</text>
             <text x="45" y="234" class="value-indent">Java • JavaScript • TypeScript</text>
-            
-            <text x="30" y="267" class="label">Brightest star:</text>
+
+            <text x="30" y="267" class="label">Brightest stars:</text>
             <text x="45" y="289" class="value-indent">repo-4 (40)</text>
 
             <text x="30" y="322" class="label">Total stargazers: <tspan class="value">40</tspan></text>
-            
 
             <path class="tui-border" d="M 358 20 H 368 M 485 20 H 985 V 350 H 358 V 20" />
             <text x="373" y="24" class="tui-header">CONSTELLATION</text>

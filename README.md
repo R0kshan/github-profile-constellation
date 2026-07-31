@@ -17,7 +17,7 @@ And what if you only have one repo? A single star may look small on its own, but
 
 ### How it works
 
-- **Nodes** - one per repository. Size and blueness reflect stargazer count, connected by a minimal spanning tree.
+- **Constellation stars** - one per repository. Size and blueness reflect stargazer count, connected by a minimal spanning tree.
 - **Background stars** - generated from your starred repos, colored by their popularity (blueness is affected by number of stars received).
 - **Links between nodes** - colored by your 3 most-used languages using GitHub-assigned language colors.
 
@@ -40,7 +40,7 @@ Without cluterring :
 |---|---|---|
 | `username` | required | Your GitHub username |
 | `tuiColor` | `318a80` | Color of the TUI panel borders and text (hex, without the `#` prefix) |
-| `showStargazers` | `1` | Show brightest star and total stargazers section (`0` to hide) |
+| `showStargazers` | `1` | Show brightest stars and total stargazers section (`0` to hide) |
 | `showBorders` | `1` | Show TUI panel borders (`0` to hide) |
 
 ### Examples
