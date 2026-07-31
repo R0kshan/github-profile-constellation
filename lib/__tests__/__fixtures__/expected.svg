@@ -49,10 +49,10 @@
                 }
 
                 .tui-border { stroke: #318a80; stroke-width: 1.5; fill: none; }
-                .tui-header { fill: #48c2b5; font-size: 13px; font-weight: bold; letter-spacing: 1px; font-family: Consolas; }
-                .label { fill: #65d6c8; font-size: 14px; font-family: Consolas; }
-                .value { fill: #c1fdf6; font-size: 14px; font-family: Consolas; }
-                .value-indent { fill: #c1fdf6; font-size: 13px; font-family: Consolas; }
+                .tui-header { fill: #6fada6; font-size: 13px; font-weight: bold; letter-spacing: 1px; font-family: Consolas; }
+                .label { fill: #98c5c0; font-size: 14px; font-family: Consolas; }
+                .value { fill: #d6e8e6; font-size: 14px; font-family: Consolas; }
+                .value-indent { fill: #d6e8e6; font-size: 13px; font-family: Consolas; }
             </style>
 
 <defs>
@@ -942,7 +942,7 @@
 
             <rect x="15" y="362" width="970" height="30" class="tui-border" />
             <text x="30" y="382" class="label" font-weight="bold">&gt;</text>
-            <rect x="44" y="370" width="2" height="13" fill="#96C7FF" opacity="0.8">
+            <rect x="44" y="370" width="2" height="13" fill="#d6e8e6" opacity="0.8">
                 <animate attributeName="opacity" values="0.8;0;0.8" dur="1.5s" repeatCount="indefinite" />
             </rect>
         </svg>
