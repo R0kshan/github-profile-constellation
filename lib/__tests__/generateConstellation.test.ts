@@ -45,7 +45,7 @@ describe('generateConstellation', () => {
   })
 
   it('generates deterministic SVG output for testuser', async () => {
-    const svg = await generateConstellation('testuser', '#96C7FF')
+    const svg = await generateConstellation('testuser')
     const fixturePath = resolve(FIXTURES, 'expected.svg')
     await expect(svg).toMatchFileSnapshot(fixturePath)
   })

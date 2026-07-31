@@ -42,7 +42,26 @@ function escapeXml(value: string): string {
         .replace(/'/g, '&apos;');
 }
 
-async function generateConstellation(userName: string, terminalColor: string, showStargazers: boolean = true, showBorders: boolean = true): Promise<string> {
+function normalizeHexColor(value: string): string {
+    const hex = value.replace(/^%23/, '');
+    return hex.startsWith('#') ? hex : `#${hex}`;
+}
+
+function lightenColor(hex: string, amount: number): string {
+    const normalized = hex.replace(/^#/, '');
+    const full = normalized.length === 3
+        ? normalized.split('').map(ch => ch + ch).join('')
+        : normalized;
+    const num = parseInt(full, 16);
+    const r = (num >> 16) & 255;
+    const g = (num >> 8) & 255;
+    const b = num & 255;
+    const mix = (channel: number) => Math.round(channel + (255 - channel) * amount);
+    const toHex = (channel: number) => channel.toString(16).padStart(2, '0');
+    return `#${toHex(mix(r))}${toHex(mix(g))}${toHex(mix(b))}`;
+}
+
+async function generateConstellation(userName: string, showStargazers: boolean = true, showBorders: boolean = true, tuiColor: string = '#318a80'): Promise<string> {
     const canvasWidth = 1000;
     const canvasHeight = 400;
 
@@ -55,6 +74,10 @@ async function generateConstellation(userName: string, terminalColor: string, sh
     const viewportHeight = 330;
     const viewportCenterX = viewportX + viewportWidth / 2;
     const viewportCenterY = viewportY + viewportHeight / 2;
+
+    const headerColor = lightenColor(tuiColor, 0.3);
+    const labelColor = lightenColor(tuiColor, 0.5);
+    const valueColor = lightenColor(tuiColor, 0.8);
 
     const fetchInit: RequestInit | undefined = process.env.GITHUB_TOKEN
         ? { headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } }
@@ -279,11 +302,11 @@ async function generateConstellation(userName: string, terminalColor: string, sh
                     }
                 }
 
-                .tui-border { stroke: #318a80; stroke-width: 1.5; fill: none; }
-                .tui-header { fill: #48c2b5; font-size: 13px; font-weight: bold; letter-spacing: 1px; font-family: Consolas; }
-                .label { fill: #65d6c8; font-size: 14px; font-family: Consolas; }
-                .value { fill: #c1fdf6; font-size: 14px; font-family: Consolas; }
-                .value-indent { fill: #c1fdf6; font-size: 13px; font-family: Consolas; }
+                .tui-border { stroke: ${tuiColor}; stroke-width: 1.5; fill: none; }
+                .tui-header { fill: ${headerColor}; font-size: 13px; font-weight: bold; letter-spacing: 1px; font-family: Consolas; }
+                .label { fill: ${labelColor}; font-size: 14px; font-family: Consolas; }
+                .value { fill: ${valueColor}; font-size: 14px; font-family: Consolas; }
+                .value-indent { fill: ${valueColor}; font-size: 13px; font-family: Consolas; }
             </style>
 
 <defs>
@@ -372,7 +395,7 @@ async function generateConstellation(userName: string, terminalColor: string, sh
 
             ${showBorders ? '<rect x="15" y="362" width="970" height="30" class="tui-border" />' : ''}
             <text x="30" y="382" class="label" font-weight="bold">&gt;</text>
-            <rect x="44" y="370" width="2" height="13" fill="${terminalColor}" opacity="0.8">
+            <rect x="44" y="370" width="2" height="13" fill="${valueColor}" opacity="0.8">
                 <animate attributeName="opacity" values="0.8;0;0.8" dur="1.5s" repeatCount="indefinite" />
             </rect>
         </svg>`;
@@ -380,4 +403,4 @@ async function generateConstellation(userName: string, terminalColor: string, sh
     return svg;
 }
 
-export { generateConstellation }
+export { generateConstellation, normalizeHexColor }

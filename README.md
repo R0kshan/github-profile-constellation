@@ -33,7 +33,7 @@ Without cluterring :
 | Parameter | Default | Description |
 |---|---|---|
 | `username` | required | Your GitHub username |
-| `terminalColor` | `#96C7FF` | Color of the terminal cursor |
+| `tuiColor` | `318a80` | Color of the TUI panel borders and text (hex, without the `#` prefix) |
 | `showStargazers` | `1` | Show brightest star and total stargazers section (`0` to hide) |
 | `showBorders` | `1` | Show TUI panel borders (`0` to hide) |
 
@@ -45,10 +45,10 @@ Basic usage:
 <img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere"/>
 ```
 
-Custom terminal color (replace `#` with `%23`):
+Custom TUI border color (also tints the panel text and cursor):
 
 ```html
-<img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&terminalColor=%234d4945"/>
+<img src="https://github-profile-constellation.vercel.app/?username=YourGithubUsernameHere&tuiColor=ff0000"/>
 ```
 
 Hide stargazer stats and TUI borders:
