@@ -367,7 +367,7 @@ async function generateConstellation(userName: string, showStargazers: boolean =
     ];
     if (showStargazers) {
         profileRowLines.push('');
-        profileRowLines.push(`<text x="30" y="${brightestStarsNeedWrap ? 248 : 270}" class="label">Brightest stars:</text>`);
+        profileRowLines.push(`<text x="30" y="${brightestStarsNeedWrap ? 248 : 270}" class="label">Hottest stars:</text>`);
         let valueY = brightestStarsNeedWrap ? 270 : 292;
         for (const line of brightestStarsLines) {
             profileRowLines.push(`<text x="45" y="${valueY}" class="value-indent">${line}</text>`);

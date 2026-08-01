@@ -42,7 +42,7 @@ Without cluterring :
 | `tuiColor` | `318a80` | Color of the TUI panel borders and text (hex, without the `#` prefix) |
 | `fontFamily` | `Consolas` | Font family for the TUI text (e.g. `Arial`, `Courier New`, `monospace`) |
 | `fontSize` | `14` | Base font size in pixels (clamped to 8–40) |
-| `showStargazers` | `1` | Show brightest stars and total stargazers section (`0` to hide) |
+| `showStargazers` | `1` | Show hottest stars and total stargazers section (`0` to hide) |
 | `showBorders` | `1` | Show TUI panel borders (`0` to hide) |
 
 ### Examples
