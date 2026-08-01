@@ -931,7 +931,7 @@
             <text x="30" y="212" class="label">Main composition:</text>
             <text x="45" y="234" class="value-indent">Java • JavaScript • TypeScript</text>
 
-            <text x="30" y="270" class="label">Brightest stars:</text>
+            <text x="30" y="270" class="label">Hottest stars:</text>
             <text x="45" y="292" class="value-indent">repo-4 (40)</text>
 
             <text x="30" y="330" class="label">Total stargazers: <tspan class="value">40</tspan></text>
