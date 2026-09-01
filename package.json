@@ -9,7 +9,7 @@
     "check": "npm run typecheck && npm run lint"
   },
   "dependencies": {
-    "js-yaml": "^4.1.1",
+    "js-yaml": "^5.2.2",
     "seedrandom": "^3.0.5"
   },
   "devDependencies": {
